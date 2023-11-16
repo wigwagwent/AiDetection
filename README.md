@@ -1,0 +1,1 @@
+[Example Rust Code for YOLOV8](https://github.com/AndreyGermanov/yolov8_onnx_rust)
