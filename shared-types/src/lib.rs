@@ -22,26 +22,36 @@ pub struct HardwareMonitor {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ImageProperties {
-    pub width: u32,
-    pub height: u32,
+    pub origin_width: u32,
+    pub origin_height: u32,
+    pub resize_width: u32,
+    pub resize_height: u32,
     pub img_buffer: Vec<u8>,
 }
 
 impl ImageProperties {
     pub fn new(input_image: DynamicImage) -> Self {
         ImageProperties {
-            width: input_image.width(),
-            height: input_image.height(),
+            origin_width: input_image.width(),
+            origin_height: input_image.height(),
+            resize_width: input_image.width(),
+            resize_height: input_image.height(),
             img_buffer: input_image.clone().into_bytes(),
         }
     }
 
-    pub fn new_scaled(input_image: DynamicImage, width: u32, height: u32) -> Self {
+    pub fn new_scaled(input_image: DynamicImage, new_width: u32, new_height: u32) -> Self {
         ImageProperties {
-            width: input_image.width(),
-            height: input_image.height(),
+            origin_width: input_image.width(),
+            origin_height: input_image.height(),
+            resize_width: new_width,
+            resize_height: new_height,
             img_buffer: input_image
-                .resize_exact(width, height, image::imageops::FilterType::CatmullRom)
+                .resize_exact(
+                    new_width,
+                    new_height,
+                    image::imageops::FilterType::CatmullRom,
+                )
                 .into_bytes(),
         }
     }
