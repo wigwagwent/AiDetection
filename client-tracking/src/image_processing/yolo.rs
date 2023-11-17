@@ -41,10 +41,28 @@ fn prepare_input(img: image::DynamicImage) -> Array<f32, IxDyn> {
 lazy_static! {
     static ref MODEL: Session = {
         let env = Arc::new(Environment::builder().with_name("YOLOv8").build().unwrap());
-        SessionBuilder::new(&env)
+
+        #[cfg(feature = "model-yolov8-s")]
+        let session = SessionBuilder::new(&env)
             .unwrap()
-            .with_model_from_file("yolov8m.onnx")
+            .with_model_from_file("model-yolov8-s.onnx")
+            .unwrap();
+        #[cfg(feature = "model-yolov8-n")]
+        let session = SessionBuilder::new(&env)
             .unwrap()
+            .with_model_from_file("model-yolov8-n.onnx")
+            .unwrap();
+        #[cfg(feature = "model-yolov8-m")]
+        let session = SessionBuilder::new(&env)
+            .unwrap()
+            .with_model_from_file("model-yolov8-m.onnx")
+            .unwrap();
+        #[cfg(feature = "model-yolov8-s-oiv7")]
+        let session = SessionBuilder::new(&env)
+            .unwrap()
+            .with_model_from_file("model-yolov8-s-oiv7.onnx")
+            .unwrap();
+        session
     };
 }
 

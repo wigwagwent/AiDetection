@@ -3,7 +3,16 @@ name = "client-tracking"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default = ["model-yolov8-s-oiv7"]
+
+
+# Currently Supported models
+#    all models should be in the ./models/ folder with same name 
+model-yolov8-s = []
+model-yolov8-n = []
+model-yolov8-m = []
+model-yolov8-s-oiv7 = []
 
 [dependencies]
 serde = { version = "1.0.190", features = ["derive", "rc"] }
@@ -16,8 +25,11 @@ tokio-tungstenite = { version = "0.20.1" }
 futures-util = { version = "0.3.29" }
 futures-channel = { version = "0.3.29" }
 image = { version = "0.24.7" }
-shared-types = { path = "../shared-types" }
+shared-types = { path = "../shared-types", features = ["model-yolov8-s-oiv7"] }
 ndarray = { version = "0.15.6" }
 ort = { version = "1.16.2" }
 deku = { version = "0.16.0" }
 lazy_static = { version = "1.4.0" }
+
+[build-dependencies]
+feature_utils = "0.0.0"

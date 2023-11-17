@@ -125,6 +125,7 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "deku",
+ "feature_utils",
  "futures-channel",
  "futures-util",
  "image",
@@ -362,6 +363,12 @@ checksum = "64d6dafc854908ff5da46ff3f8f473c6984119a2876a383a860246dd7841a868"
 dependencies = [
  "simd-adler32",
 ]
+
+[[package]]
+name = "feature_utils"
+version = "0.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "535edfc411b7b1c07e47f94b20706fbf1344ffe8bdc722fce17ba25cddeef052"
 
 [[package]]
 name = "filetime"
@@ -1250,6 +1257,7 @@ name = "shared-types"
 version = "0.1.0"
 dependencies = [
  "deku",
+ "feature_utils",
  "image",
  "serde",
  "tokio",
