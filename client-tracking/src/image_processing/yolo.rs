@@ -135,10 +135,10 @@ impl ObjectDetection for Yolo {
             let w = row[2] / 640.0 * (self.origin_img_width as f32);
             let h = row[3] / 640.0 * (self.origin_img_height as f32);
             let item_box = TrackingResult {
-                x1: xc - w / 2.0,
-                x2: xc + w / 2.0, //TODO: Fix me to be better
-                y1: yc - h / 2.0,
-                y2: yc + h / 2.0,
+                x_bottom_corner: (xc - w / 2.0) as i32,
+                y_bottom_corner: (yc - h / 2.0) as i32,
+                x_length: w as u32,
+                y_height: h as u32,
                 label,
                 probablility: prob,
             };
@@ -173,17 +173,21 @@ fn iou(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
 // Function calculates union area of two boxes
 // Returns Area of the boxes union as a float number
 fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
-    let box1_area = (box1.x2 - box1.x1) * (box1.y2 - box1.y1);
-    let box2_area = (box2.x2 - box2.x1) * (box2.y2 - box2.y1);
-    return box1_area + box2_area - intersection(box1, box2);
+    let box1_area = (box1.x_length as i32 - box1.x_bottom_corner)
+        * (box1.y_height as i32 - box1.y_bottom_corner);
+    let box2_area = (box2.x_length as i32 - box2.x_bottom_corner)
+        * (box2.y_height as i32 - box2.y_bottom_corner);
+    return box1_area as f32 + box2_area as f32 - intersection(box1, box2);
 }
 
 // Function calculates intersection area of two boxes
 // Returns Area of intersection of the boxes as a float number
 fn intersection(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
-    let x1 = box1.x1.max(box2.x1);
-    let y1 = box1.y1.max(box2.y1);
-    let x2 = box1.x2.min(box2.x2);
-    let y2 = box1.y2.min(box2.y2);
-    return (x2 - x1) * (y2 - y1);
+    let x1 = box1.x_bottom_corner.max(box2.x_bottom_corner);
+    let y1 = box1.y_bottom_corner.max(box2.y_bottom_corner);
+    let x2 = (box1.x_bottom_corner + box1.x_length as i32)
+        .min(box2.x_bottom_corner + box2.x_length as i32);
+    let y2 = (box1.y_bottom_corner + box1.y_height as i32)
+        .min(box2.y_bottom_corner + box2.y_height as i32);
+    return (x2 - x1) as f32 * (y2 - y1) as f32;
 }

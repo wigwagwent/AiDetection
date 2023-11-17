@@ -6,10 +6,10 @@ pub mod yolo;
 
 #[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy)]
 pub struct TrackingResult {
-    pub x1: f32,
-    pub y1: f32,
-    pub x2: f32,
-    pub y2: f32,
+    pub x_bottom_corner: i32,
+    pub y_bottom_corner: i32,
+    pub x_length: u32,
+    pub y_height: u32,
     pub label: ItemLabel,
     pub probablility: f32,
 }

@@ -96,10 +96,8 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients) {
         for rectangle in rectangles {
             draw_hollow_rect_mut(
                 &mut img,
-                Rect::at(rectangle.x1 as i32, rectangle.y2 as i32).of_size(
-                    (rectangle.x2 - rectangle.x1) as u32,
-                    (rectangle.y1 - rectangle.y2) as u32,
-                ),
+                Rect::at(rectangle.x_bottom_corner, rectangle.y_bottom_corner)
+                    .of_size(rectangle.x_length, rectangle.y_height),
                 Rgba([97, 51, 47, 0]),
             );
         }
