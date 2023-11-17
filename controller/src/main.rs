@@ -3,6 +3,7 @@ mod websocket;
 
 use dashmap::DashMap;
 use shared_types::server::{ClientData, SentData, SentDataType};
+use shared_types::ImageProperties;
 use std::sync::atomic::AtomicUsize;
 use std::time::Duration;
 use std::{fs, sync::Arc, thread};
@@ -37,7 +38,7 @@ async fn main() {
                 if let Ok(entry) = entry {
                     thread::sleep(Duration::from_secs_f32((1.0 / 60.0) * (60.0 / framerate)));
 
-                    let img = match controller::get_image_raw(entry.path()) {
+                    let img = match image::open(entry.path()) {
                         Ok(image) => image,
                         Err(error) => {
                             println!("Image could not be read, {}", error);
@@ -54,7 +55,8 @@ async fn main() {
                         let (&_uid, tx) = client.pair();
 
                         if !tx.busy.load(std::sync::atomic::Ordering::Relaxed) {
-                            let raw_data = bincode::serialize(&img.clone()).unwrap();
+                            let raw_img = ImageProperties::new_scaled(img.clone(), 640, 640);
+                            let raw_data = bincode::serialize(&raw_img).unwrap();
 
                             let send_message = SentData {
                                 data_type: SentDataType::Image,
@@ -62,6 +64,7 @@ async fn main() {
                             };
                             let send_message = bincode::serialize(&send_message).unwrap();
                             if send_message.len() > 16777216 {
+                                println!("Oversized package detected");
                                 continue;
                             }
                             images_processed += 1;

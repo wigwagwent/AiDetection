@@ -1,10 +1,10 @@
-use crate::yolo::ItemBox;
+use crate::tracking::TrackingResult;
 use serde::{Deserialize, Serialize};
 use tokio::time::Duration;
 
 #[derive(Serialize, Deserialize)]
 pub enum ReturnDataType {
-    ListOfItems(Vec<ItemBox>),
+    ListOfItems(Vec<TrackingResult>),
 }
 
 #[derive(Serialize, Deserialize)]

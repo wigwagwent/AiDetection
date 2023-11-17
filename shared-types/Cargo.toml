@@ -3,23 +3,9 @@ name = "shared-types"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-default = []
-
-
-# Currently Supported models
-#    all models should be in the ./models/ folder with same name 
-model-yolov8-s = []
-model-yolov8-n = []
-model-yolov8-m = []
-model-yolov8-s-oiv7 = []
-
 [dependencies]
 serde = { version = "1.0.190", features = ["derive", "rc"] }
 image = { version = "0.24.7" }
 deku = { version = "0.16.0" }
 tokio = { version = "1.33.0", features = ["full"] }
 warp = { version = "0.3.6" }
-
-[build-dependencies]
-feature_utils = "0.0.0"

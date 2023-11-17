@@ -1,7 +1,6 @@
 use dashmap::DashMap;
-use image::ImageError;
 use serde::{Deserialize, Serialize};
-use shared_types::{HardwareMonitor, ImageProperties};
+use shared_types::HardwareMonitor;
 use std::{path::PathBuf, sync::Arc};
 
 #[derive(Serialize, Deserialize)]
@@ -31,11 +30,3 @@ pub struct ControllerInfo {
 //         }
 //     }
 // }
-
-pub fn get_image_raw(path: PathBuf) -> Result<ImageProperties, ImageError> {
-    let img = match image::open(&path) {
-        Ok(image) => image,
-        Err(error) => return Err(error),
-    };
-    Ok(ImageProperties::new(img))
-}

@@ -1,8 +1,8 @@
-use image::{imageops::FilterType, GenericImageView};
+use image::GenericImageView;
 use lazy_static::lazy_static;
 use ndarray::{s, Array, Axis, IxDyn};
 use ort::{Environment, Session, SessionBuilder, Value};
-use shared_types::yolo::{ItemBox, YoloClasses};
+use shared_types::tracking::{yolo::YoloClassesOIV7, TrackingResult};
 use std::{sync::Arc, vec};
 
 // Function receives an image,
@@ -14,7 +14,7 @@ pub fn detect_objects_on_image(
     img: image::DynamicImage,
     img_width: u32,
     img_height: u32,
-) -> Vec<ItemBox> {
+) -> Vec<TrackingResult> {
     let input = prepare_input(img);
     let output = run_model(input);
     return process_output(output, img_width, img_height);
@@ -25,7 +25,7 @@ pub fn detect_objects_on_image(
 // network.
 // Returns the input tensor, original image width and height
 fn prepare_input(img: image::DynamicImage) -> Array<f32, IxDyn> {
-    let img = img.resize_exact(640, 640, FilterType::CatmullRom);
+    //let img = img.resize_exact(640, 640, FilterType::CatmullRom); //Should be resized from the server
     let mut input = Array::zeros((1, 3, 640, 640)).into_dyn();
     for pixel in img.pixels() {
         let x = pixel.0 as usize;
@@ -89,7 +89,11 @@ fn run_model(input: Array<f32, IxDyn>) -> Array<f32, IxDyn> {
 // of detected objects. Each object contain the bounding box of
 // this object, the type of object and the probability
 // Returns array of detected objects in a format [(x1,y1,x2,y2,object_type,probability),..]
-fn process_output(output: Array<f32, IxDyn>, img_width: u32, img_height: u32) -> Vec<ItemBox> {
+fn process_output(
+    output: Array<f32, IxDyn>,
+    img_width: u32,
+    img_height: u32,
+) -> Vec<TrackingResult> {
     let mut boxes = Vec::new();
     let output = output.slice(s![.., .., 0]);
     for row in output.axis_iter(Axis(0)) {
@@ -106,12 +110,32 @@ fn process_output(output: Array<f32, IxDyn>, img_width: u32, img_height: u32) ->
         }
         let class_idu8: u8 = class_id.try_into().unwrap();
         let class_idu8 = [class_idu8];
-        let label = YoloClasses::try_from(class_idu8.as_ref()).unwrap();
+
+        #[cfg(feature = "model-yolov8-s")]
+        let label = shared_types::tracking::ItemLabel::YoloClasses80(
+            YoloClasses80::try_from(class_idu8.as_ref()).unwrap(),
+        );
+
+        #[cfg(feature = "model-yolov8-n")]
+        let label = shared_types::tracking::ItemLabel::YoloClasses80(
+            YoloClasses80::try_from(class_idu8.as_ref()).unwrap(),
+        );
+
+        #[cfg(feature = "model-yolov8-m")]
+        let label = shared_types::tracking::ItemLabel::YoloClasses80(
+            YoloClasses80::try_from(class_idu8.as_ref()).unwrap(),
+        );
+
+        #[cfg(feature = "model-yolov8-s-oiv7")]
+        let label = shared_types::tracking::ItemLabel::YoloClassesOIV7(
+            YoloClassesOIV7::try_from(class_idu8.as_ref()).unwrap(),
+        );
+
         let xc = row[0] / 640.0 * (img_width as f32);
         let yc = row[1] / 640.0 * (img_height as f32);
         let w = row[2] / 640.0 * (img_width as f32);
         let h = row[3] / 640.0 * (img_height as f32);
-        let item_box = ItemBox {
+        let item_box = TrackingResult {
             x1: xc - w / 2.0,
             x2: xc + w / 2.0,
             y1: yc - h / 2.0,
@@ -142,13 +166,13 @@ fn process_output(output: Array<f32, IxDyn>, img_width: u32, img_height: u32) ->
 // Function calculates "Intersection-over-union" coefficient for specified two boxes
 // https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/.
 // Returns Intersection over union ratio as a float number
-fn iou(box1: &ItemBox, box2: &ItemBox) -> f32 {
+fn iou(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     return intersection(box1, box2) / union(box1, box2);
 }
 
 // Function calculates union area of two boxes
 // Returns Area of the boxes union as a float number
-fn union(box1: &ItemBox, box2: &ItemBox) -> f32 {
+fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     let box1_area = (box1.x2 - box1.x1) * (box1.y2 - box1.y1);
     let box2_area = (box2.x2 - box2.x1) * (box2.y2 - box2.y1);
     return box1_area + box2_area - intersection(box1, box2);
@@ -156,7 +180,7 @@ fn union(box1: &ItemBox, box2: &ItemBox) -> f32 {
 
 // Function calculates intersection area of two boxes
 // Returns Area of intersection of the boxes as a float number
-fn intersection(box1: &ItemBox, box2: &ItemBox) -> f32 {
+fn intersection(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     let x1 = box1.x1.max(box2.x1);
     let y1 = box1.y1.max(box2.y1);
     let x2 = box1.x2.min(box2.x2);

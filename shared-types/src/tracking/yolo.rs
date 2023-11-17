@@ -1,22 +1,11 @@
 use deku::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy)]
-pub struct ItemBox {
-    pub x1: f32,
-    pub y1: f32,
-    pub x2: f32,
-    pub y2: f32,
-    pub label: YoloClasses,
-    pub probablility: f32,
-}
-
-#[cfg(not(feature = "model-yolob8-s-oiv7"))]
 #[derive(
     Debug, PartialEq, DekuRead, DekuWrite, Serialize, Deserialize, Eq, PartialOrd, Clone, Copy,
 )]
 #[deku(type = "usize")]
-pub enum YoloClasses {
+pub enum YoloClasses80 {
     #[deku(id = "0")]
     Person,
     #[deku(id = "1")]
@@ -179,12 +168,11 @@ pub enum YoloClasses {
     Toothbrush,
 }
 
-#[cfg(feature = "model-yolob8-s-oiv7")]
 #[derive(
     Debug, PartialEq, DekuRead, DekuWrite, Serialize, Deserialize, Eq, PartialOrd, Clone, Copy,
 )]
 #[deku(type = "usize")]
-pub enum YoloClasses {
+pub enum YoloClassesOIV7 {
     #[deku(id = "0")]
     Accordion,
     #[deku(id = "1")]

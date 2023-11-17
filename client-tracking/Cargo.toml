@@ -25,7 +25,7 @@ tokio-tungstenite = { version = "0.20.1" }
 futures-util = { version = "0.3.29" }
 futures-channel = { version = "0.3.29" }
 image = { version = "0.24.7" }
-shared-types = { path = "../shared-types", features = ["model-yolov8-s-oiv7"] }
+shared-types = { path = "../shared-types" }
 ndarray = { version = "0.15.6" }
 ort = { version = "1.16.2" }
 deku = { version = "0.16.0" }

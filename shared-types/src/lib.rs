@@ -2,7 +2,7 @@ use image::DynamicImage;
 use serde::{Deserialize, Serialize};
 pub mod client;
 pub mod server;
-pub mod yolo;
+pub mod tracking;
 
 #[derive(Serialize, Deserialize)]
 pub enum Processing {
@@ -33,6 +33,16 @@ impl ImageProperties {
             width: input_image.width(),
             height: input_image.height(),
             img_buffer: input_image.clone().into_bytes(),
+        }
+    }
+
+    pub fn new_scaled(input_image: DynamicImage, width: u32, height: u32) -> Self {
+        ImageProperties {
+            width: input_image.width(),
+            height: input_image.height(),
+            img_buffer: input_image
+                .resize_exact(width, height, image::imageops::FilterType::CatmullRom)
+                .into_bytes(),
         }
     }
 }

@@ -1,4 +1,6 @@
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
+use image::Rgba;
+use imageproc::{drawing::draw_hollow_rect_mut, rect::Rect};
 use shared_types::{client::ReturnData, server::ClientData};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::mpsc;
@@ -74,8 +76,44 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients) {
             .busy
             .store(false, std::sync::atomic::Ordering::Relaxed);
         let data: ReturnData = bincode::deserialize(msg.as_bytes()).unwrap();
-        let ser = serde_json::to_string_pretty(&data).expect("this to work");
-        println!("{}", ser);
+
+        //
+        //
+        //
+        //
+        //
+        let mut img = match image::open("img.path") {
+            Ok(image) => image,
+            Err(error) => {
+                panic!("Image could not be read, {}", error);
+            }
+        };
+
+        let rectangles = match data.data_type {
+            shared_types::client::ReturnDataType::ListOfItems(rec) => rec,
+        };
+
+        for rectangle in rectangles {
+            draw_hollow_rect_mut(
+                &mut img,
+                Rect::at(rectangle.x1 as i32, rectangle.y2 as i32).of_size(
+                    (rectangle.x2 - rectangle.x1) as u32,
+                    (rectangle.y1 - rectangle.y2) as u32,
+                ),
+                Rgba([97, 51, 47, 0]),
+            );
+        }
+
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //let ser = serde_json::to_string_pretty(&data).expect("this to work");
+        //println!("{}", ser);
     } else {
         return;
     }
