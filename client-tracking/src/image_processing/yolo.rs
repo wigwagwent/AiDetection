@@ -2,7 +2,11 @@ use image::GenericImageView;
 use lazy_static::lazy_static;
 use ndarray::{s, Array, Axis, IxDyn};
 use ort::{Environment, Session, SessionBuilder, Value};
-use shared_types::tracking::{yolo::YoloClassesOIV7, TrackingResult};
+#[allow(unused_imports)] //based on features
+use shared_types::tracking::{
+    yolo::{YoloClasses80, YoloClassesOIV7},
+    TrackingResult,
+};
 use std::{sync::Arc, vec};
 
 // Function receives an image,
@@ -108,28 +112,19 @@ fn process_output(
         if prob < 0.5 {
             continue;
         }
-        let class_idu8: u8 = class_id.try_into().unwrap();
-        let class_idu8 = [class_idu8];
 
         #[cfg(feature = "model-yolov8-s")]
-        let label = shared_types::tracking::ItemLabel::YoloClasses80(
-            YoloClasses80::try_from(class_idu8.as_ref()).unwrap(),
-        );
+        let label = shared_types::tracking::ItemLabel::YoloClasses80(YoloClasses80::from(class_id));
 
         #[cfg(feature = "model-yolov8-n")]
-        let label = shared_types::tracking::ItemLabel::YoloClasses80(
-            YoloClasses80::try_from(class_idu8.as_ref()).unwrap(),
-        );
+        let label = shared_types::tracking::ItemLabel::YoloClasses80(YoloClasses80::from(class_id));
 
         #[cfg(feature = "model-yolov8-m")]
-        let label = shared_types::tracking::ItemLabel::YoloClasses80(
-            YoloClasses80::try_from(class_idu8.as_ref()).unwrap(),
-        );
+        let label = shared_types::tracking::ItemLabel::YoloClasses80(YoloClasses80::from(class_id));
 
         #[cfg(feature = "model-yolov8-s-oiv7")]
-        let label = shared_types::tracking::ItemLabel::YoloClassesOIV7(
-            YoloClassesOIV7::try_from(class_idu8.as_ref()).unwrap(),
-        );
+        let label =
+            shared_types::tracking::ItemLabel::YoloClassesOIV7(YoloClassesOIV7::from(class_id));
 
         let xc = row[0] / 640.0 * (img_width as f32);
         let yc = row[1] / 640.0 * (img_height as f32);

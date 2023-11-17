@@ -28,7 +28,6 @@ image = { version = "0.24.7" }
 shared-types = { path = "../shared-types" }
 ndarray = { version = "0.15.6" }
 ort = { version = "1.16.2" }
-deku = { version = "0.16.0" }
 lazy_static = { version = "1.4.0" }
 
 [build-dependencies]

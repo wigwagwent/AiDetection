@@ -1,1378 +1,1387 @@
-use deku::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(
-    Debug, PartialEq, DekuRead, DekuWrite, Serialize, Deserialize, Eq, PartialOrd, Clone, Copy,
-)]
-#[deku(type = "usize")]
+#[derive(Debug, PartialEq, Serialize, Deserialize, Eq, PartialOrd, Clone, Copy)]
 pub enum YoloClasses80 {
-    #[deku(id = "0")]
     Person,
-    #[deku(id = "1")]
     Bicycle,
-    #[deku(id = "2")]
     Car,
-    #[deku(id = "3")]
     Motorcycle,
-    #[deku(id = "4")]
     Airplane,
-    #[deku(id = "5")]
     Bus,
-    #[deku(id = "6")]
     Train,
-    #[deku(id = "7")]
     Truck,
-    #[deku(id = "8")]
     Boat,
-    #[deku(id = "9")]
     TrafficLight,
-    #[deku(id = "10")]
     FireHydrant,
-    #[deku(id = "11")]
     StopSign,
-    #[deku(id = "12")]
     ParkingMeter,
-    #[deku(id = "13")]
     Bench,
-    #[deku(id = "14")]
     Bird,
-    #[deku(id = "15")]
     Cat,
-    #[deku(id = "16")]
     Dog,
-    #[deku(id = "17")]
     Horse,
-    #[deku(id = "18")]
     Sheep,
-    #[deku(id = "19")]
     Cow,
-    #[deku(id = "20")]
     Elephant,
-    #[deku(id = "21")]
     Bear,
-    #[deku(id = "22")]
     Zebra,
-    #[deku(id = "23")]
     Giraffe,
-    #[deku(id = "24")]
     Backpack,
-    #[deku(id = "25")]
     Umbrella,
-    #[deku(id = "26")]
     Handbag,
-    #[deku(id = "27")]
     Tie,
-    #[deku(id = "28")]
     Suitcase,
-    #[deku(id = "29")]
     Frisbee,
-    #[deku(id = "30")]
     Skis,
-    #[deku(id = "31")]
     Snowboard,
-    #[deku(id = "32")]
     SportsBall,
-    #[deku(id = "33")]
     Kite,
-    #[deku(id = "34")]
     BaseballBat,
-    #[deku(id = "35")]
     BaseballGlove,
-    #[deku(id = "36")]
     Skateboard,
-    #[deku(id = "37")]
     Surfboard,
-    #[deku(id = "38")]
     TennisRacket,
-    #[deku(id = "39")]
     Bottle,
-    #[deku(id = "40")]
     WineGlass,
-    #[deku(id = "41")]
     Cup,
-    #[deku(id = "42")]
     Fork,
-    #[deku(id = "43")]
     Knife,
-    #[deku(id = "44")]
     Spoon,
-    #[deku(id = "45")]
     Bowl,
-    #[deku(id = "46")]
     Banana,
-    #[deku(id = "47")]
     Apple,
-    #[deku(id = "48")]
     Sandwich,
-    #[deku(id = "49")]
     Orange,
-    #[deku(id = "50")]
     Broccoli,
-    #[deku(id = "51")]
     Carrot,
-    #[deku(id = "52")]
     HotDog,
-    #[deku(id = "53")]
     Pizza,
-    #[deku(id = "54")]
     Donut,
-    #[deku(id = "55")]
     Cake,
-    #[deku(id = "56")]
     Chair,
-    #[deku(id = "57")]
     Couch,
-    #[deku(id = "58")]
     PottedPlant,
-    #[deku(id = "59")]
     Bed,
-    #[deku(id = "60")]
     DiningTable,
-    #[deku(id = "61")]
     Toilet,
-    #[deku(id = "62")]
     Tv,
-    #[deku(id = "63")]
     Laptop,
-    #[deku(id = "64")]
     Mouse,
-    #[deku(id = "65")]
     Remote,
-    #[deku(id = "66")]
     Keyboard,
-    #[deku(id = "67")]
     CellPhone,
-    #[deku(id = "68")]
     Microwave,
-    #[deku(id = "69")]
     Oven,
-    #[deku(id = "70")]
     Toaster,
-    #[deku(id = "71")]
     Sink,
-    #[deku(id = "72")]
     Refrigerator,
-    #[deku(id = "73")]
     Book,
-    #[deku(id = "74")]
     Clock,
-    #[deku(id = "75")]
     Vase,
-    #[deku(id = "76")]
     Scissors,
-    #[deku(id = "77")]
     TeddyBear,
-    #[deku(id = "78")]
     HairDrier,
-    #[deku(id = "79")]
     Toothbrush,
 }
 
-#[derive(
-    Debug, PartialEq, DekuRead, DekuWrite, Serialize, Deserialize, Eq, PartialOrd, Clone, Copy,
-)]
-#[deku(type = "usize")]
+impl From<usize> for YoloClasses80 {
+    fn from(label: usize) -> Self {
+        match label {
+            0 => YoloClasses80::Person,
+            1 => YoloClasses80::Bicycle,
+            2 => YoloClasses80::Car,
+            3 => YoloClasses80::Motorcycle,
+            4 => YoloClasses80::Airplane,
+            5 => YoloClasses80::Bus,
+            6 => YoloClasses80::Train,
+            7 => YoloClasses80::Truck,
+            8 => YoloClasses80::Boat,
+            9 => YoloClasses80::TrafficLight,
+            10 => YoloClasses80::FireHydrant,
+            11 => YoloClasses80::StopSign,
+            12 => YoloClasses80::ParkingMeter,
+            13 => YoloClasses80::Bench,
+            14 => YoloClasses80::Bird,
+            15 => YoloClasses80::Cat,
+            16 => YoloClasses80::Dog,
+            17 => YoloClasses80::Horse,
+            18 => YoloClasses80::Sheep,
+            19 => YoloClasses80::Cow,
+            20 => YoloClasses80::Elephant,
+            21 => YoloClasses80::Bear,
+            22 => YoloClasses80::Zebra,
+            23 => YoloClasses80::Giraffe,
+            24 => YoloClasses80::Backpack,
+            25 => YoloClasses80::Umbrella,
+            26 => YoloClasses80::Handbag,
+            27 => YoloClasses80::Tie,
+            28 => YoloClasses80::Suitcase,
+            29 => YoloClasses80::Frisbee,
+            30 => YoloClasses80::Skis,
+            31 => YoloClasses80::Snowboard,
+            32 => YoloClasses80::SportsBall,
+            33 => YoloClasses80::Kite,
+            34 => YoloClasses80::BaseballBat,
+            35 => YoloClasses80::BaseballGlove,
+            36 => YoloClasses80::Skateboard,
+            37 => YoloClasses80::Surfboard,
+            38 => YoloClasses80::TennisRacket,
+            39 => YoloClasses80::Bottle,
+            40 => YoloClasses80::WineGlass,
+            41 => YoloClasses80::Cup,
+            42 => YoloClasses80::Fork,
+            43 => YoloClasses80::Knife,
+            44 => YoloClasses80::Spoon,
+            45 => YoloClasses80::Bowl,
+            46 => YoloClasses80::Banana,
+            47 => YoloClasses80::Apple,
+            48 => YoloClasses80::Sandwich,
+            49 => YoloClasses80::Orange,
+            50 => YoloClasses80::Broccoli,
+            51 => YoloClasses80::Carrot,
+            52 => YoloClasses80::HotDog,
+            53 => YoloClasses80::Pizza,
+            54 => YoloClasses80::Donut,
+            55 => YoloClasses80::Cake,
+            56 => YoloClasses80::Chair,
+            57 => YoloClasses80::Couch,
+            58 => YoloClasses80::PottedPlant,
+            59 => YoloClasses80::Bed,
+            60 => YoloClasses80::DiningTable,
+            61 => YoloClasses80::Toilet,
+            62 => YoloClasses80::Tv,
+            63 => YoloClasses80::Laptop,
+            64 => YoloClasses80::Mouse,
+            65 => YoloClasses80::Remote,
+            66 => YoloClasses80::Keyboard,
+            67 => YoloClasses80::CellPhone,
+            68 => YoloClasses80::Microwave,
+            69 => YoloClasses80::Oven,
+            70 => YoloClasses80::Toaster,
+            71 => YoloClasses80::Sink,
+            72 => YoloClasses80::Refrigerator,
+            73 => YoloClasses80::Book,
+            74 => YoloClasses80::Clock,
+            75 => YoloClasses80::Vase,
+            76 => YoloClasses80::Scissors,
+            77 => YoloClasses80::TeddyBear,
+            78 => YoloClasses80::HairDrier,
+            79 => YoloClasses80::Toothbrush,
+            _ => panic!("The Label returned a bigger number than what was expected"),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize, Eq, PartialOrd, Clone, Copy)]
 pub enum YoloClassesOIV7 {
-    #[deku(id = "0")]
     Accordion,
-    #[deku(id = "1")]
     AdhesiveTape,
-    #[deku(id = "2")]
     Aircraft,
-    #[deku(id = "3")]
     Airplane,
-    #[deku(id = "4")]
     AlarmClock,
-    #[deku(id = "5")]
     Alpaca,
-    #[deku(id = "6")]
     Ambulance,
-    #[deku(id = "7")]
     Animal,
-    #[deku(id = "8")]
     Ant,
-    #[deku(id = "9")]
     Antelope,
-    #[deku(id = "10")]
     Apple,
-    #[deku(id = "11")]
     Armadillo,
-    #[deku(id = "12")]
     Artichoke,
-    #[deku(id = "13")]
     AutoPart,
-    #[deku(id = "14")]
     Axe,
-    #[deku(id = "15")]
     Backpack,
-    #[deku(id = "16")]
     Bagel,
-    #[deku(id = "17")]
     BakedGoods,
-    #[deku(id = "18")]
     BalanceBeam,
-    #[deku(id = "19")]
     Ball,
-    #[deku(id = "20")]
     Balloon,
-    #[deku(id = "21")]
     Banana,
-    #[deku(id = "22")]
     BandAid,
-    #[deku(id = "23")]
     Banjo,
-    #[deku(id = "24")]
     Barge,
-    #[deku(id = "25")]
     Barrel,
-    #[deku(id = "26")]
     BaseballBat,
-    #[deku(id = "27")]
     BaseballGlove,
-    #[deku(id = "28")]
     Bat, // (Animal)
-    #[deku(id = "29")]
     BathroomAccessory,
-    #[deku(id = "30")]
     BathroomCabinet,
-    #[deku(id = "31")]
     Bathtub,
-    #[deku(id = "32")]
     Beaker,
-    #[deku(id = "33")]
     Bear,
-    #[deku(id = "34")]
     Bed,
-    #[deku(id = "35")]
     Bee,
-    #[deku(id = "36")]
     Beehive,
-    #[deku(id = "37")]
     Beer,
-    #[deku(id = "38")]
     Beetle,
-    #[deku(id = "39")]
     BellPepper,
-    #[deku(id = "40")]
     Belt,
-    #[deku(id = "41")]
     Bench,
-    #[deku(id = "42")]
     Bicycle,
-    #[deku(id = "43")]
     BicycleHelmet,
-    #[deku(id = "44")]
     BicycleWheel,
-    #[deku(id = "45")]
     Bidet,
-    #[deku(id = "46")]
     Billboard,
-    #[deku(id = "47")]
     BilliardTable,
-    #[deku(id = "48")]
     Binoculars,
-    #[deku(id = "49")]
     Bird,
-    #[deku(id = "50")]
     Blender,
-    #[deku(id = "51")]
     BlueJay,
-    #[deku(id = "52")]
     Boat,
-    #[deku(id = "53")]
     Bomb,
-    #[deku(id = "54")]
     Book,
-    #[deku(id = "55")]
     Bookcase,
-    #[deku(id = "56")]
     Boot,
-    #[deku(id = "57")]
     Bottle,
-    #[deku(id = "58")]
     BottleOpener,
-    #[deku(id = "59")]
     BowAndArrow,
-    #[deku(id = "60")]
     Bowl,
-    #[deku(id = "61")]
     BowlingEquipment,
-    #[deku(id = "62")]
     Box,
-    #[deku(id = "63")]
     Boy,
-    #[deku(id = "64")]
     Brassiere,
-    #[deku(id = "65")]
     Bread,
-    #[deku(id = "66")]
     Briefcase,
-    #[deku(id = "67")]
     Broccoli,
-    #[deku(id = "68")]
     BronzeSculpture,
-    #[deku(id = "69")]
     BrownBear,
-    #[deku(id = "70")]
     Building,
-    #[deku(id = "71")]
     Bull,
-    #[deku(id = "72")]
     Burrito,
-    #[deku(id = "73")]
     Bus,
-    #[deku(id = "74")]
     Bust,
-    #[deku(id = "75")]
     Butterfly,
-    #[deku(id = "76")]
     Cabbage,
-    #[deku(id = "77")]
     Cabinetry,
-    #[deku(id = "78")]
     Cake,
-    #[deku(id = "79")]
     CakeStand,
-    #[deku(id = "80")]
     Calculator,
-    #[deku(id = "81")]
     Camel,
-    #[deku(id = "82")]
     Camera,
-    #[deku(id = "83")]
     CanOpener,
-    #[deku(id = "84")]
     Canary,
-    #[deku(id = "85")]
     Candle,
-    #[deku(id = "86")]
     Candy,
-    #[deku(id = "87")]
     Cannon,
-    #[deku(id = "88")]
     Canoe,
-    #[deku(id = "89")]
     Cantaloupe,
-    #[deku(id = "90")]
     Car,
-    #[deku(id = "91")]
     Carnivore,
-    #[deku(id = "92")]
     Carrot,
-    #[deku(id = "93")]
     Cart,
-    #[deku(id = "94")]
     CassetteDeck,
-    #[deku(id = "95")]
     Castle,
-    #[deku(id = "96")]
     Cat,
-    #[deku(id = "97")]
     CatFurniture,
-    #[deku(id = "98")]
     Caterpillar,
-    #[deku(id = "99")]
     Cattle,
-    #[deku(id = "100")]
     CeilingFan,
-    #[deku(id = "101")]
     Cello,
-    #[deku(id = "102")]
     Centipede,
-    #[deku(id = "103")]
     Chainsaw,
-    #[deku(id = "104")]
     Chair,
-    #[deku(id = "105")]
     Cheese,
-    #[deku(id = "106")]
     Cheetah,
-    #[deku(id = "107")]
     ChestOfDrawers,
-    #[deku(id = "108")]
     Chicken,
-    #[deku(id = "109")]
     Chime,
-    #[deku(id = "110")]
     Chisel,
-    #[deku(id = "111")]
     Chopsticks,
-    #[deku(id = "112")]
     ChristmasTree,
-    #[deku(id = "113")]
     Clock,
-    #[deku(id = "114")]
     Closet,
-    #[deku(id = "115")]
     Clothing,
-    #[deku(id = "116")]
     Coat,
-    #[deku(id = "117")]
     Cocktail,
-    #[deku(id = "118")]
     CocktailShaker,
-    #[deku(id = "119")]
     Coconut,
-    #[deku(id = "120")]
     Coffee,
-    #[deku(id = "121")]
     CoffeeCup,
-    #[deku(id = "122")]
     CoffeeTable,
-    #[deku(id = "123")]
     Coffeemaker,
-    #[deku(id = "124")]
     Coin,
-    #[deku(id = "125")]
     CommonFig,
-    #[deku(id = "126")]
     CommonSunflower,
-    #[deku(id = "127")]
     ComputerKeyboard,
-    #[deku(id = "128")]
     ComputerMonitor,
-    #[deku(id = "129")]
     ComputerMouse,
-    #[deku(id = "130")]
     Container,
-    #[deku(id = "131")]
     ConvenienceStore,
-    #[deku(id = "132")]
     Cookie,
-    #[deku(id = "133")]
     CookingSpray,
-    #[deku(id = "134")]
     CordedPhone,
-    #[deku(id = "135")]
     Cosmetics,
-    #[deku(id = "136")]
     Couch,
-    #[deku(id = "137")]
     Countertop,
-    #[deku(id = "138")]
     CowboyHat,
-    #[deku(id = "139")]
     Crab,
-    #[deku(id = "140")]
     Cream,
-    #[deku(id = "141")]
     CricketBall,
-    #[deku(id = "142")]
     Crocodile,
-    #[deku(id = "143")]
     Croissant,
-    #[deku(id = "144")]
     Crown,
-    #[deku(id = "145")]
     Crutch,
-    #[deku(id = "146")]
     Cucumber,
-    #[deku(id = "147")]
     Cupboard,
-    #[deku(id = "148")]
     Curtain,
-    #[deku(id = "149")]
     CuttingBoard,
-    #[deku(id = "150")]
     Dagger,
-    #[deku(id = "151")]
     DairyProduct,
-    #[deku(id = "152")]
     Deer,
-    #[deku(id = "153")]
     Desk,
-    #[deku(id = "154")]
     Dessert,
-    #[deku(id = "155")]
     Diaper,
-    #[deku(id = "156")]
     Dice,
-    #[deku(id = "157")]
     DigitalClock,
-    #[deku(id = "158")]
     Dinosaur,
-    #[deku(id = "159")]
     Dishwasher,
-    #[deku(id = "160")]
     Dog,
-    #[deku(id = "161")]
     DogBed,
-    #[deku(id = "162")]
     Doll,
-    #[deku(id = "163")]
     Dolphin,
-    #[deku(id = "164")]
     Door,
-    #[deku(id = "165")]
     DoorHandle,
-    #[deku(id = "166")]
     Doughnut,
-    #[deku(id = "167")]
     Dragonfly,
-    #[deku(id = "168")]
     Drawer,
-    #[deku(id = "169")]
     Dress,
-    #[deku(id = "170")]
     Drill, // (Tool)
-    #[deku(id = "171")]
     Drink,
-    #[deku(id = "172")]
     DrinkingStraw,
-    #[deku(id = "173")]
     Drum,
-    #[deku(id = "174")]
     Duck,
-    #[deku(id = "175")]
     Dumbbell,
-    #[deku(id = "176")]
     Eagle,
-    #[deku(id = "177")]
     Earrings,
-    #[deku(id = "178")]
     Egg, //  (Food)
-    #[deku(id = "179")]
     Elephant,
-    #[deku(id = "180")]
     Envelope,
-    #[deku(id = "181")]
     Eraser,
-    #[deku(id = "182")]
     FacePowder,
-    #[deku(id = "183")]
     FacialTissueHolder,
-    #[deku(id = "184")]
     Falcon,
-    #[deku(id = "185")]
     FashionAccessory,
-    #[deku(id = "186")]
     FastFood,
-    #[deku(id = "187")]
     Fax,
-    #[deku(id = "188")]
     Fedora,
-    #[deku(id = "189")]
     FilingCabinet,
-    #[deku(id = "190")]
     FireHydrant,
-    #[deku(id = "191")]
     Fireplace,
-    #[deku(id = "192")]
     Fish,
-    #[deku(id = "193")]
     Flag,
-    #[deku(id = "194")]
     Flashlight,
-    #[deku(id = "195")]
     Flower,
-    #[deku(id = "196")]
     Flowerpot,
-    #[deku(id = "197")]
     Flute,
-    #[deku(id = "198")]
     FlyingDisc,
-    #[deku(id = "199")]
     Food,
-    #[deku(id = "200")]
     FoodProcessor,
-    #[deku(id = "201")]
     Football,
-    #[deku(id = "202")]
     FootballHelmet,
-    #[deku(id = "203")]
     Footwear,
-    #[deku(id = "204")]
     Fork,
-    #[deku(id = "205")]
     Fountain,
-    #[deku(id = "206")]
     Fox,
-    #[deku(id = "207")]
     FrenchFries,
-    #[deku(id = "208")]
     FrenchHorn,
-    #[deku(id = "209")]
     Frog,
-    #[deku(id = "210")]
     Fruit,
-    #[deku(id = "211")]
     FryingPan,
-    #[deku(id = "212")]
     Furniture,
-    #[deku(id = "213")]
     GardenAsparagus,
-    #[deku(id = "214")]
     GasStove,
-    #[deku(id = "215")]
     Giraffe,
-    #[deku(id = "216")]
     Girl,
-    #[deku(id = "217")]
     Glasses,
-    #[deku(id = "218")]
     Glove,
-    #[deku(id = "219")]
     Goat,
-    #[deku(id = "220")]
     Goggles,
-    #[deku(id = "221")]
     Goldfish,
-    #[deku(id = "222")]
     GolfBall,
-    #[deku(id = "223")]
     GolfCart,
-    #[deku(id = "224")]
     Gondola,
-    #[deku(id = "225")]
     Goose,
-    #[deku(id = "226")]
     Grape,
-    #[deku(id = "227")]
     Grapefruit,
-    #[deku(id = "228")]
     Grinder,
-    #[deku(id = "229")]
     Guacamole,
-    #[deku(id = "230")]
     Guitar,
-    #[deku(id = "231")]
     HairDryer,
-    #[deku(id = "232")]
     HairSpray,
-    #[deku(id = "233")]
     Hamburger,
-    #[deku(id = "234")]
     Hammer,
-    #[deku(id = "235")]
     Hamster,
-    #[deku(id = "236")]
     HandDryer,
-    #[deku(id = "237")]
     Handbag,
-    #[deku(id = "238")]
     Handgun,
-    #[deku(id = "239")]
     HarborSeal,
-    #[deku(id = "240")]
     Harmonica,
-    #[deku(id = "241")]
     Harp,
-    #[deku(id = "242")]
     Harpsichord,
-    #[deku(id = "243")]
     Hat,
-    #[deku(id = "244")]
     Headphones,
-    #[deku(id = "245")]
     Heater,
-    #[deku(id = "246")]
     Hedgehog,
-    #[deku(id = "247")]
     Helicopter,
-    #[deku(id = "248")]
     Helmet,
-    #[deku(id = "249")]
     HighHeels,
-    #[deku(id = "250")]
     HikingEquipment,
-    #[deku(id = "251")]
     Hippopotamus,
-    #[deku(id = "252")]
     HomeAppliance,
-    #[deku(id = "253")]
     Honeycomb,
-    #[deku(id = "254")]
     HorizontalBar,
-    #[deku(id = "255")]
     Horse,
-    #[deku(id = "256")]
     HotDog,
-    #[deku(id = "257")]
     House,
-    #[deku(id = "258")]
     Houseplant,
-    #[deku(id = "259")]
     HumanArm,
-    #[deku(id = "260")]
     HumanBeard,
-    #[deku(id = "261")]
     HumanBody,
-    #[deku(id = "262")]
     HumanEar,
-    #[deku(id = "263")]
     HumanEye,
-    #[deku(id = "264")]
     HumanFace,
-    #[deku(id = "265")]
     HumanFoot,
-    #[deku(id = "266")]
     HumanHair,
-    #[deku(id = "267")]
     HumanHand,
-    #[deku(id = "268")]
     HumanHead,
-    #[deku(id = "269")]
     HumanLeg,
-    #[deku(id = "270")]
     HumanMouth,
-    #[deku(id = "271")]
     HumanNose,
-    #[deku(id = "272")]
     Humidifier,
-    #[deku(id = "273")]
     IceCream,
-    #[deku(id = "274")]
     IndoorRower,
-    #[deku(id = "275")]
     InfantBed,
-    #[deku(id = "276")]
     Insect,
-    #[deku(id = "277")]
     Invertebrate,
-    #[deku(id = "278")]
     Ipod,
-    #[deku(id = "279")]
     Isopod,
-    #[deku(id = "280")]
     Jacket,
-    #[deku(id = "281")]
     Jacuzzi,
-    #[deku(id = "282")]
     Jaguar, // (Animal)
-    #[deku(id = "283")]
     Jeans,
-    #[deku(id = "284")]
     Jellyfish,
-    #[deku(id = "285")]
     JetSki,
-    #[deku(id = "286")]
     Jug,
-    #[deku(id = "287")]
     Juice,
-    #[deku(id = "288")]
     Kangaroo,
-    #[deku(id = "289")]
     Kettle,
-    #[deku(id = "290")]
     DinnerTable,
-    #[deku(id = "291")]
     KitchenAppliance,
-    #[deku(id = "292")]
     KitchenKnife,
-    #[deku(id = "293")]
     KitchenUtensil,
-    #[deku(id = "294")]
     Kitchenware,
-    #[deku(id = "295")]
     Kite,
-    #[deku(id = "296")]
     Knife,
-    #[deku(id = "297")]
     Koala,
-    #[deku(id = "298")]
     Ladder,
-    #[deku(id = "299")]
     Ladle,
-    #[deku(id = "300")]
     Ladybug,
-    #[deku(id = "301")]
     Lamp,
-    #[deku(id = "302")]
     LandVehicle,
-    #[deku(id = "303")]
     Lantern,
-    #[deku(id = "304")]
     Laptop,
-    #[deku(id = "305")]
     Lavender, // (Plant)
-    #[deku(id = "306")]
     Lemon,
-    #[deku(id = "307")]
     Leopard,
-    #[deku(id = "308")]
     LightBulb,
-    #[deku(id = "309")]
     LightSwitch,
-    #[deku(id = "310")]
     Lighthouse,
-    #[deku(id = "311")]
     Lily,
-    #[deku(id = "312")]
     Limousine,
-    #[deku(id = "313")]
     Lion,
-    #[deku(id = "314")]
     Lipstick,
-    #[deku(id = "315")]
     Lizard,
-    #[deku(id = "316")]
     Lobster,
-    #[deku(id = "317")]
     Loveseat,
-    #[deku(id = "318")]
     LuggageAndBags,
-    #[deku(id = "319")]
     Lynx,
-    #[deku(id = "320")]
     Magpie,
-    #[deku(id = "321")]
     Mammal,
-    #[deku(id = "322")]
     Man,
-    #[deku(id = "323")]
     Mango,
-    #[deku(id = "324")]
     Maple,
-    #[deku(id = "325")]
     Maracas,
-    #[deku(id = "326")]
     MarineInvertebrates,
-    #[deku(id = "327")]
     MarineMammal,
-    #[deku(id = "328")]
     MeasuringCup,
-    #[deku(id = "329")]
     MechanicalFan,
-    #[deku(id = "330")]
     MedicalEquipment,
-    #[deku(id = "331")]
     Microphone,
-    #[deku(id = "332")]
     MicrowaveOven,
-    #[deku(id = "333")]
     Milk,
-    #[deku(id = "334")]
     Miniskirt,
-    #[deku(id = "335")]
     Mirror,
-    #[deku(id = "336")]
     Missile,
-    #[deku(id = "337")]
     Mixer,
-    #[deku(id = "338")]
     MixingBowl,
-    #[deku(id = "339")]
     MobilePhone,
-    #[deku(id = "340")]
     Monkey,
-    #[deku(id = "341")]
     MothsAndButterflies,
-    #[deku(id = "342")]
     Motorcycle,
-    #[deku(id = "343")]
     Mouse,
-    #[deku(id = "344")]
     Muffin,
-    #[deku(id = "345")]
     Mug,
-    #[deku(id = "346")]
     Mule,
-    #[deku(id = "347")]
     Mushroom,
-    #[deku(id = "348")]
     MusicalInstrument,
-    #[deku(id = "349")]
     MusicalKeyboard,
-    #[deku(id = "350")]
     Nail, // (Construction)
-    #[deku(id = "351")]
     Necklace,
-    #[deku(id = "352")]
     Nightstand,
-    #[deku(id = "353")]
     Oboe,
-    #[deku(id = "354")]
     OfficeBuilding,
-    #[deku(id = "355")]
     OfficeSupplies,
-    #[deku(id = "356")]
     Orange,
-    #[deku(id = "357")]
     Organ, // (Musical Instrument)
-    #[deku(id = "358")]
     Ostrich,
-    #[deku(id = "359")]
     Otter,
-    #[deku(id = "360")]
     Oven,
-    #[deku(id = "361")]
     Owl,
-    #[deku(id = "362")]
     Oyster,
-    #[deku(id = "363")]
     Paddle,
-    #[deku(id = "364")]
     PalmTree,
-    #[deku(id = "365")]
     Pancake,
-    #[deku(id = "366")]
     Panda,
-    #[deku(id = "367")]
     PaperCutter,
-    #[deku(id = "368")]
     PaperTowel,
-    #[deku(id = "369")]
     Parachute,
-    #[deku(id = "370")]
     ParkingMeter,
-    #[deku(id = "371")]
     Parrot,
-    #[deku(id = "372")]
     Pasta,
-    #[deku(id = "373")]
     Pastry,
-    #[deku(id = "374")]
     Peach,
-    #[deku(id = "375")]
     Pear,
-    #[deku(id = "376")]
     Pen,
-    #[deku(id = "377")]
     PencilCase,
-    #[deku(id = "378")]
     PencilSharpener,
-    #[deku(id = "379")]
     Penguin,
-    #[deku(id = "380")]
     Perfume,
-    #[deku(id = "381")]
     Person,
-    #[deku(id = "382")]
     PersonalCare,
-    #[deku(id = "383")]
     PersonalFlotationDevice,
-    #[deku(id = "384")]
     Piano,
-    #[deku(id = "385")]
     PicnicBasket,
-    #[deku(id = "386")]
     PictureFrame,
-    #[deku(id = "387")]
     Pig,
-    #[deku(id = "388")]
     Pillow,
-    #[deku(id = "389")]
     Pineapple,
-    #[deku(id = "390")]
     Pitcher, // (Container)
-    #[deku(id = "391")]
     Pizza,
-    #[deku(id = "392")]
     PizzaCutter,
-    #[deku(id = "393")]
     Plant,
-    #[deku(id = "394")]
     PlasticBag,
-    #[deku(id = "395")]
     Plate,
-    #[deku(id = "396")]
     Platter,
-    #[deku(id = "397")]
     PlumbingFixture,
-    #[deku(id = "398")]
     PolarBear,
-    #[deku(id = "399")]
     Pomegranate,
-    #[deku(id = "400")]
     Popcorn,
-    #[deku(id = "401")]
     Porch,
-    #[deku(id = "402")]
     Porcupine,
-    #[deku(id = "403")]
     Poster,
-    #[deku(id = "404")]
     Potato,
-    #[deku(id = "405")]
     PowerPlugsAndSockets,
-    #[deku(id = "406")]
     PressureCooker,
-    #[deku(id = "407")]
     Pretzel,
-    #[deku(id = "408")]
     Printer,
-    #[deku(id = "409")]
     Pumpkin,
-    #[deku(id = "410")]
     PunchingBag,
-    #[deku(id = "411")]
     Rabbit,
-    #[deku(id = "412")]
     Raccoon,
-    #[deku(id = "413")]
     Racket,
-    #[deku(id = "414")]
     Radish,
-    #[deku(id = "415")]
     Ratchet, // (Device)
-    #[deku(id = "416")]
     Raven,
-    #[deku(id = "417")]
     RaysAndSkates,
-    #[deku(id = "418")]
     RedPanda,
-    #[deku(id = "419")]
     Refrigerator,
-    #[deku(id = "420")]
     RemoteControl,
-    #[deku(id = "421")]
     Reptile,
-    #[deku(id = "422")]
     Rhinoceros,
-    #[deku(id = "423")]
     Rifle,
-    #[deku(id = "424")]
     RingBinder,
-    #[deku(id = "425")]
     Rocket,
-    #[deku(id = "426")]
     RollerSkates,
-    #[deku(id = "427")]
     Rose,
-    #[deku(id = "428")]
     RugbyBall,
-    #[deku(id = "429")]
     Ruler,
-    #[deku(id = "430")]
     Salad,
-    #[deku(id = "431")]
     SaltAndPepperShakers,
-    #[deku(id = "432")]
     Sandal,
-    #[deku(id = "433")]
     Sandwich,
-    #[deku(id = "434")]
     Saucer,
-    #[deku(id = "435")]
     Saxophone,
-    #[deku(id = "436")]
     Scale,
-    #[deku(id = "437")]
     Scarf,
-    #[deku(id = "438")]
     Scissors,
-    #[deku(id = "439")]
     Scoreboard,
-    #[deku(id = "440")]
     Scorpion,
-    #[deku(id = "441")]
     Screwdriver,
-    #[deku(id = "442")]
     Sculpture,
-    #[deku(id = "443")]
     SeaLion,
-    #[deku(id = "444")]
     SeaTurtle,
-    #[deku(id = "445")]
     Seafood,
-    #[deku(id = "446")]
     Seahorse,
-    #[deku(id = "447")]
     SeatBelt,
-    #[deku(id = "448")]
     Segway,
-    #[deku(id = "449")]
     ServingTray,
-    #[deku(id = "450")]
     SewingMachine,
-    #[deku(id = "451")]
     Shark,
-    #[deku(id = "452")]
     Sheep,
-    #[deku(id = "453")]
     Shelf,
-    #[deku(id = "454")]
     Shellfish,
-    #[deku(id = "455")]
     Shirt,
-    #[deku(id = "456")]
     Shorts,
-    #[deku(id = "457")]
     Shotgun,
-    #[deku(id = "458")]
     Shower,
-    #[deku(id = "459")]
     Shrimp,
-    #[deku(id = "460")]
     Sink,
-    #[deku(id = "461")]
     Skateboard,
-    #[deku(id = "462")]
     Ski,
-    #[deku(id = "463")]
     Skirt,
-    #[deku(id = "464")]
     Skull,
-    #[deku(id = "465")]
     Skunk,
-    #[deku(id = "466")]
     Skyscraper,
-    #[deku(id = "467")]
     SlowCooker,
-    #[deku(id = "468")]
     Snack,
-    #[deku(id = "469")]
     Snail,
-    #[deku(id = "470")]
     Snake,
-    #[deku(id = "471")]
     Snowboard,
-    #[deku(id = "472")]
     Snowman,
-    #[deku(id = "473")]
     Snowmobile,
-    #[deku(id = "474")]
     Snowplow,
-    #[deku(id = "475")]
     SoapDispenser,
-    #[deku(id = "476")]
     Sock,
-    #[deku(id = "477")]
     SofaBed,
-    #[deku(id = "478")]
     Sombrero,
-    #[deku(id = "479")]
     Sparrow,
-    #[deku(id = "480")]
     Spatula,
-    #[deku(id = "481")]
     SpiceRack,
-    #[deku(id = "482")]
     Spider,
-    #[deku(id = "483")]
     Spoon,
-    #[deku(id = "484")]
     SportsEquipment,
-    #[deku(id = "485")]
     SportsUniform,
-    #[deku(id = "486")]
     Squash, //(Plant)
-    #[deku(id = "487")]
     Squid,
-    #[deku(id = "488")]
     Squirrel,
-    #[deku(id = "489")]
     Stairs,
-    #[deku(id = "490")]
     Stapler,
-    #[deku(id = "491")]
     Starfish,
-    #[deku(id = "492")]
     StationaryBicycle,
-    #[deku(id = "493")]
     Stethoscope,
-    #[deku(id = "494")]
     Stool,
-    #[deku(id = "495")]
     StopSign,
-    #[deku(id = "496")]
     Strawberry,
-    #[deku(id = "497")]
     StreetLight,
-    #[deku(id = "498")]
     Stretcher,
-    #[deku(id = "499")]
     StudioCouch,
-    #[deku(id = "500")]
     Submarine,
-    #[deku(id = "501")]
     SubmarineSandwich,
-    #[deku(id = "502")]
     Suit,
-    #[deku(id = "503")]
     Suitcase,
-    #[deku(id = "504")]
     SunHat,
-    #[deku(id = "505")]
     Sunglasses,
-    #[deku(id = "506")]
     Surfboard,
-    #[deku(id = "507")]
     Sushi,
-    #[deku(id = "508")]
     Swan,
-    #[deku(id = "509")]
     SwimCap,
-    #[deku(id = "510")]
     SwimmingPool,
-    #[deku(id = "511")]
     Swimwear,
-    #[deku(id = "512")]
     Sword,
-    #[deku(id = "513")]
     Syringe,
-    #[deku(id = "514")]
     Table,
-    #[deku(id = "515")]
     TableTennisRacket,
-    #[deku(id = "516")]
     TabletComputer,
-    #[deku(id = "517")]
     Tableware,
-    #[deku(id = "518")]
     Taco,
-    #[deku(id = "519")]
     Tank,
-    #[deku(id = "520")]
     Tap,
-    #[deku(id = "521")]
     Tart,
-    #[deku(id = "522")]
     Taxi,
-    #[deku(id = "523")]
     Tea,
-    #[deku(id = "524")]
     Teapot,
-    #[deku(id = "525")]
     TeddyBear,
-    #[deku(id = "526")]
     Telephone,
-    #[deku(id = "527")]
     Television,
-    #[deku(id = "528")]
     TennisBall,
-    #[deku(id = "529")]
     TennisRacket,
-    #[deku(id = "530")]
     Tent,
-    #[deku(id = "531")]
     Tiara,
-    #[deku(id = "532")]
     Tick,
-    #[deku(id = "533")]
     Tie,
-    #[deku(id = "534")]
     Tiger,
-    #[deku(id = "535")]
     TinCan,
-    #[deku(id = "536")]
     Tire,
-    #[deku(id = "537")]
     Toaster,
-    #[deku(id = "538")]
     Toilet,
-    #[deku(id = "539")]
     ToiletPaper,
-    #[deku(id = "540")]
     Tomato,
-    #[deku(id = "541")]
     Tool,
-    #[deku(id = "542")]
     Toothbrush,
-    #[deku(id = "543")]
     Torch,
-    #[deku(id = "544")]
     Tortoise,
-    #[deku(id = "545")]
     Towel,
-    #[deku(id = "546")]
     Tower,
-    #[deku(id = "547")]
     Toy,
-    #[deku(id = "548")]
     TrafficLight,
-    #[deku(id = "549")]
     TrafficSign,
-    #[deku(id = "550")]
     Train,
-    #[deku(id = "551")]
     TrainingBench,
-    #[deku(id = "552")]
     Treadmill,
-    #[deku(id = "553")]
     Tree,
-    #[deku(id = "554")]
     TreeHouse,
-    #[deku(id = "555")]
     Tripod,
-    #[deku(id = "556")]
     Trombone,
-    #[deku(id = "557")]
     Trousers,
-    #[deku(id = "558")]
     Truck,
-    #[deku(id = "559")]
     Trumpet,
-    #[deku(id = "560")]
     Turkey,
-    #[deku(id = "561")]
     Turtle,
-    #[deku(id = "562")]
     Umbrella,
-    #[deku(id = "563")]
     Unicycle,
-    #[deku(id = "564")]
     Van,
-    #[deku(id = "565")]
     Vase,
-    #[deku(id = "566")]
     Vegetable,
-    #[deku(id = "567")]
     Vehicle,
-    #[deku(id = "568")]
     VehicleRegistrationPlate,
-    #[deku(id = "569")]
     Violin,
-    #[deku(id = "570")]
     Volleyball, // (Ball)
-    #[deku(id = "571")]
     Waffle,
-    #[deku(id = "572")]
     WaffleIron,
-    #[deku(id = "573")]
     WallClock,
-    #[deku(id = "574")]
     Wardrobe,
-    #[deku(id = "575")]
     WashingMachine,
-    #[deku(id = "576")]
     WasteContainer,
-    #[deku(id = "577")]
     Watch,
-    #[deku(id = "578")]
     Watercraft,
-    #[deku(id = "579")]
     Watermelon,
-    #[deku(id = "580")]
     Weapon,
-    #[deku(id = "581")]
     Whale,
-    #[deku(id = "582")]
     Wheel,
-    #[deku(id = "583")]
     Wheelchair,
-    #[deku(id = "584")]
     Whisk,
-    #[deku(id = "585")]
     Whiteboard,
-    #[deku(id = "586")]
     Willow,
-    #[deku(id = "587")]
     Window,
-    #[deku(id = "588")]
     WindowBlind,
-    #[deku(id = "589")]
     Wine,
-    #[deku(id = "590")]
     WineGlass,
-    #[deku(id = "591")]
     WineRack,
-    #[deku(id = "592")]
     WinterMelon,
-    #[deku(id = "593")]
     Wok,
-    #[deku(id = "594")]
     Woman,
-    #[deku(id = "595")]
     WoodBurningStove,
-    #[deku(id = "596")]
     Woodpecker,
-    #[deku(id = "597")]
     Worm,
-    #[deku(id = "598")]
     Wrench,
-    #[deku(id = "599")]
     Zebra,
-    #[deku(id = "600")]
     Zucchini,
+}
+
+impl From<usize> for YoloClassesOIV7 {
+    fn from(label: usize) -> YoloClassesOIV7 {
+        match label {
+            0 => YoloClassesOIV7::Accordion,
+            1 => YoloClassesOIV7::AdhesiveTape,
+            2 => YoloClassesOIV7::Aircraft,
+            3 => YoloClassesOIV7::Airplane,
+            4 => YoloClassesOIV7::AlarmClock,
+            5 => YoloClassesOIV7::Alpaca,
+            6 => YoloClassesOIV7::Ambulance,
+            7 => YoloClassesOIV7::Animal,
+            8 => YoloClassesOIV7::Ant,
+            9 => YoloClassesOIV7::Antelope,
+            10 => YoloClassesOIV7::Apple,
+            11 => YoloClassesOIV7::Armadillo,
+            12 => YoloClassesOIV7::Artichoke,
+            13 => YoloClassesOIV7::AutoPart,
+            14 => YoloClassesOIV7::Axe,
+            15 => YoloClassesOIV7::Backpack,
+            16 => YoloClassesOIV7::Bagel,
+            17 => YoloClassesOIV7::BakedGoods,
+            18 => YoloClassesOIV7::BalanceBeam,
+            19 => YoloClassesOIV7::Ball,
+            20 => YoloClassesOIV7::Balloon,
+            21 => YoloClassesOIV7::Banana,
+            22 => YoloClassesOIV7::BandAid,
+            23 => YoloClassesOIV7::Banjo,
+            24 => YoloClassesOIV7::Barge,
+            25 => YoloClassesOIV7::Barrel,
+            26 => YoloClassesOIV7::BaseballBat,
+            27 => YoloClassesOIV7::BaseballGlove,
+            28 => YoloClassesOIV7::Bat, // (Animal)
+            29 => YoloClassesOIV7::BathroomAccessory,
+            30 => YoloClassesOIV7::BathroomCabinet,
+            31 => YoloClassesOIV7::Bathtub,
+            32 => YoloClassesOIV7::Beaker,
+            33 => YoloClassesOIV7::Bear,
+            34 => YoloClassesOIV7::Bed,
+            35 => YoloClassesOIV7::Bee,
+            36 => YoloClassesOIV7::Beehive,
+            37 => YoloClassesOIV7::Beer,
+            38 => YoloClassesOIV7::Beetle,
+            39 => YoloClassesOIV7::BellPepper,
+            40 => YoloClassesOIV7::Belt,
+            41 => YoloClassesOIV7::Bench,
+            42 => YoloClassesOIV7::Bicycle,
+            43 => YoloClassesOIV7::BicycleHelmet,
+            44 => YoloClassesOIV7::BicycleWheel,
+            45 => YoloClassesOIV7::Bidet,
+            46 => YoloClassesOIV7::Billboard,
+            47 => YoloClassesOIV7::BilliardTable,
+            48 => YoloClassesOIV7::Binoculars,
+            49 => YoloClassesOIV7::Bird,
+            50 => YoloClassesOIV7::Blender,
+            51 => YoloClassesOIV7::BlueJay,
+            52 => YoloClassesOIV7::Boat,
+            53 => YoloClassesOIV7::Bomb,
+            54 => YoloClassesOIV7::Book,
+            55 => YoloClassesOIV7::Bookcase,
+            56 => YoloClassesOIV7::Boot,
+            57 => YoloClassesOIV7::Bottle,
+            58 => YoloClassesOIV7::BottleOpener,
+            59 => YoloClassesOIV7::BowAndArrow,
+            60 => YoloClassesOIV7::Bowl,
+            61 => YoloClassesOIV7::BowlingEquipment,
+            62 => YoloClassesOIV7::Box,
+            63 => YoloClassesOIV7::Boy,
+            64 => YoloClassesOIV7::Brassiere,
+            65 => YoloClassesOIV7::Bread,
+            66 => YoloClassesOIV7::Briefcase,
+            67 => YoloClassesOIV7::Broccoli,
+            68 => YoloClassesOIV7::BronzeSculpture,
+            69 => YoloClassesOIV7::BrownBear,
+            70 => YoloClassesOIV7::Building,
+            71 => YoloClassesOIV7::Bull,
+            72 => YoloClassesOIV7::Burrito,
+            73 => YoloClassesOIV7::Bus,
+            74 => YoloClassesOIV7::Bust,
+            75 => YoloClassesOIV7::Butterfly,
+            76 => YoloClassesOIV7::Cabbage,
+            77 => YoloClassesOIV7::Cabinetry,
+            78 => YoloClassesOIV7::Cake,
+            79 => YoloClassesOIV7::CakeStand,
+            80 => YoloClassesOIV7::Calculator,
+            81 => YoloClassesOIV7::Camel,
+            82 => YoloClassesOIV7::Camera,
+            83 => YoloClassesOIV7::CanOpener,
+            84 => YoloClassesOIV7::Canary,
+            85 => YoloClassesOIV7::Candle,
+            86 => YoloClassesOIV7::Candy,
+            87 => YoloClassesOIV7::Cannon,
+            88 => YoloClassesOIV7::Canoe,
+            89 => YoloClassesOIV7::Cantaloupe,
+            90 => YoloClassesOIV7::Car,
+            91 => YoloClassesOIV7::Carnivore,
+            92 => YoloClassesOIV7::Carrot,
+            93 => YoloClassesOIV7::Cart,
+            94 => YoloClassesOIV7::CassetteDeck,
+            95 => YoloClassesOIV7::Castle,
+            96 => YoloClassesOIV7::Cat,
+            97 => YoloClassesOIV7::CatFurniture,
+            98 => YoloClassesOIV7::Caterpillar,
+            99 => YoloClassesOIV7::Cattle,
+            100 => YoloClassesOIV7::CeilingFan,
+            101 => YoloClassesOIV7::Cello,
+            102 => YoloClassesOIV7::Centipede,
+            103 => YoloClassesOIV7::Chainsaw,
+            104 => YoloClassesOIV7::Chair,
+            105 => YoloClassesOIV7::Cheese,
+            106 => YoloClassesOIV7::Cheetah,
+            107 => YoloClassesOIV7::ChestOfDrawers,
+            108 => YoloClassesOIV7::Chicken,
+            109 => YoloClassesOIV7::Chime,
+            110 => YoloClassesOIV7::Chisel,
+            111 => YoloClassesOIV7::Chopsticks,
+            112 => YoloClassesOIV7::ChristmasTree,
+            113 => YoloClassesOIV7::Clock,
+            114 => YoloClassesOIV7::Closet,
+            115 => YoloClassesOIV7::Clothing,
+            116 => YoloClassesOIV7::Coat,
+            117 => YoloClassesOIV7::Cocktail,
+            118 => YoloClassesOIV7::CocktailShaker,
+            119 => YoloClassesOIV7::Coconut,
+            120 => YoloClassesOIV7::Coffee,
+            121 => YoloClassesOIV7::CoffeeCup,
+            122 => YoloClassesOIV7::CoffeeTable,
+            123 => YoloClassesOIV7::Coffeemaker,
+            124 => YoloClassesOIV7::Coin,
+            125 => YoloClassesOIV7::CommonFig,
+            126 => YoloClassesOIV7::CommonSunflower,
+            127 => YoloClassesOIV7::ComputerKeyboard,
+            128 => YoloClassesOIV7::ComputerMonitor,
+            129 => YoloClassesOIV7::ComputerMouse,
+            130 => YoloClassesOIV7::Container,
+            131 => YoloClassesOIV7::ConvenienceStore,
+            132 => YoloClassesOIV7::Cookie,
+            133 => YoloClassesOIV7::CookingSpray,
+            134 => YoloClassesOIV7::CordedPhone,
+            135 => YoloClassesOIV7::Cosmetics,
+            136 => YoloClassesOIV7::Couch,
+            137 => YoloClassesOIV7::Countertop,
+            138 => YoloClassesOIV7::CowboyHat,
+            139 => YoloClassesOIV7::Crab,
+            140 => YoloClassesOIV7::Cream,
+            141 => YoloClassesOIV7::CricketBall,
+            142 => YoloClassesOIV7::Crocodile,
+            143 => YoloClassesOIV7::Croissant,
+            144 => YoloClassesOIV7::Crown,
+            145 => YoloClassesOIV7::Crutch,
+            146 => YoloClassesOIV7::Cucumber,
+            147 => YoloClassesOIV7::Cupboard,
+            148 => YoloClassesOIV7::Curtain,
+            149 => YoloClassesOIV7::CuttingBoard,
+            150 => YoloClassesOIV7::Dagger,
+            151 => YoloClassesOIV7::DairyProduct,
+            152 => YoloClassesOIV7::Deer,
+            153 => YoloClassesOIV7::Desk,
+            154 => YoloClassesOIV7::Dessert,
+            155 => YoloClassesOIV7::Diaper,
+            156 => YoloClassesOIV7::Dice,
+            157 => YoloClassesOIV7::DigitalClock,
+            158 => YoloClassesOIV7::Dinosaur,
+            159 => YoloClassesOIV7::Dishwasher,
+            160 => YoloClassesOIV7::Dog,
+            161 => YoloClassesOIV7::DogBed,
+            162 => YoloClassesOIV7::Doll,
+            163 => YoloClassesOIV7::Dolphin,
+            164 => YoloClassesOIV7::Door,
+            165 => YoloClassesOIV7::DoorHandle,
+            166 => YoloClassesOIV7::Doughnut,
+            167 => YoloClassesOIV7::Dragonfly,
+            168 => YoloClassesOIV7::Drawer,
+            169 => YoloClassesOIV7::Dress,
+            170 => YoloClassesOIV7::Drill, // (Tool)
+            171 => YoloClassesOIV7::Drink,
+            172 => YoloClassesOIV7::DrinkingStraw,
+            173 => YoloClassesOIV7::Drum,
+            174 => YoloClassesOIV7::Duck,
+            175 => YoloClassesOIV7::Dumbbell,
+            176 => YoloClassesOIV7::Eagle,
+            177 => YoloClassesOIV7::Earrings,
+            178 => YoloClassesOIV7::Egg, //  (Food)
+            179 => YoloClassesOIV7::Elephant,
+            180 => YoloClassesOIV7::Envelope,
+            181 => YoloClassesOIV7::Eraser,
+            182 => YoloClassesOIV7::FacePowder,
+            183 => YoloClassesOIV7::FacialTissueHolder,
+            184 => YoloClassesOIV7::Falcon,
+            185 => YoloClassesOIV7::FashionAccessory,
+            186 => YoloClassesOIV7::FastFood,
+            187 => YoloClassesOIV7::Fax,
+            188 => YoloClassesOIV7::Fedora,
+            189 => YoloClassesOIV7::FilingCabinet,
+            190 => YoloClassesOIV7::FireHydrant,
+            191 => YoloClassesOIV7::Fireplace,
+            192 => YoloClassesOIV7::Fish,
+            193 => YoloClassesOIV7::Flag,
+            194 => YoloClassesOIV7::Flashlight,
+            195 => YoloClassesOIV7::Flower,
+            196 => YoloClassesOIV7::Flowerpot,
+            197 => YoloClassesOIV7::Flute,
+            198 => YoloClassesOIV7::FlyingDisc,
+            199 => YoloClassesOIV7::Food,
+            200 => YoloClassesOIV7::FoodProcessor,
+            201 => YoloClassesOIV7::Football,
+            202 => YoloClassesOIV7::FootballHelmet,
+            203 => YoloClassesOIV7::Footwear,
+            204 => YoloClassesOIV7::Fork,
+            205 => YoloClassesOIV7::Fountain,
+            206 => YoloClassesOIV7::Fox,
+            207 => YoloClassesOIV7::FrenchFries,
+            208 => YoloClassesOIV7::FrenchHorn,
+            209 => YoloClassesOIV7::Frog,
+            210 => YoloClassesOIV7::Fruit,
+            211 => YoloClassesOIV7::FryingPan,
+            212 => YoloClassesOIV7::Furniture,
+            213 => YoloClassesOIV7::GardenAsparagus,
+            214 => YoloClassesOIV7::GasStove,
+            215 => YoloClassesOIV7::Giraffe,
+            216 => YoloClassesOIV7::Girl,
+            217 => YoloClassesOIV7::Glasses,
+            218 => YoloClassesOIV7::Glove,
+            219 => YoloClassesOIV7::Goat,
+            220 => YoloClassesOIV7::Goggles,
+            221 => YoloClassesOIV7::Goldfish,
+            222 => YoloClassesOIV7::GolfBall,
+            223 => YoloClassesOIV7::GolfCart,
+            224 => YoloClassesOIV7::Gondola,
+            225 => YoloClassesOIV7::Goose,
+            226 => YoloClassesOIV7::Grape,
+            227 => YoloClassesOIV7::Grapefruit,
+            228 => YoloClassesOIV7::Grinder,
+            229 => YoloClassesOIV7::Guacamole,
+            230 => YoloClassesOIV7::Guitar,
+            231 => YoloClassesOIV7::HairDryer,
+            232 => YoloClassesOIV7::HairSpray,
+            233 => YoloClassesOIV7::Hamburger,
+            234 => YoloClassesOIV7::Hammer,
+            235 => YoloClassesOIV7::Hamster,
+            236 => YoloClassesOIV7::HandDryer,
+            237 => YoloClassesOIV7::Handbag,
+            238 => YoloClassesOIV7::Handgun,
+            239 => YoloClassesOIV7::HarborSeal,
+            240 => YoloClassesOIV7::Harmonica,
+            241 => YoloClassesOIV7::Harp,
+            242 => YoloClassesOIV7::Harpsichord,
+            243 => YoloClassesOIV7::Hat,
+            244 => YoloClassesOIV7::Headphones,
+            245 => YoloClassesOIV7::Heater,
+            246 => YoloClassesOIV7::Hedgehog,
+            247 => YoloClassesOIV7::Helicopter,
+            248 => YoloClassesOIV7::Helmet,
+            249 => YoloClassesOIV7::HighHeels,
+            250 => YoloClassesOIV7::HikingEquipment,
+            251 => YoloClassesOIV7::Hippopotamus,
+            252 => YoloClassesOIV7::HomeAppliance,
+            253 => YoloClassesOIV7::Honeycomb,
+            254 => YoloClassesOIV7::HorizontalBar,
+            255 => YoloClassesOIV7::Horse,
+            256 => YoloClassesOIV7::HotDog,
+            257 => YoloClassesOIV7::House,
+            258 => YoloClassesOIV7::Houseplant,
+            259 => YoloClassesOIV7::HumanArm,
+            260 => YoloClassesOIV7::HumanBeard,
+            261 => YoloClassesOIV7::HumanBody,
+            262 => YoloClassesOIV7::HumanEar,
+            263 => YoloClassesOIV7::HumanEye,
+            264 => YoloClassesOIV7::HumanFace,
+            265 => YoloClassesOIV7::HumanFoot,
+            266 => YoloClassesOIV7::HumanHair,
+            267 => YoloClassesOIV7::HumanHand,
+            268 => YoloClassesOIV7::HumanHead,
+            269 => YoloClassesOIV7::HumanLeg,
+            270 => YoloClassesOIV7::HumanMouth,
+            271 => YoloClassesOIV7::HumanNose,
+            272 => YoloClassesOIV7::Humidifier,
+            273 => YoloClassesOIV7::IceCream,
+            274 => YoloClassesOIV7::IndoorRower,
+            275 => YoloClassesOIV7::InfantBed,
+            276 => YoloClassesOIV7::Insect,
+            277 => YoloClassesOIV7::Invertebrate,
+            278 => YoloClassesOIV7::Ipod,
+            279 => YoloClassesOIV7::Isopod,
+            280 => YoloClassesOIV7::Jacket,
+            281 => YoloClassesOIV7::Jacuzzi,
+            282 => YoloClassesOIV7::Jaguar, // (Animal)
+            283 => YoloClassesOIV7::Jeans,
+            284 => YoloClassesOIV7::Jellyfish,
+            285 => YoloClassesOIV7::JetSki,
+            286 => YoloClassesOIV7::Jug,
+            287 => YoloClassesOIV7::Juice,
+            288 => YoloClassesOIV7::Kangaroo,
+            289 => YoloClassesOIV7::Kettle,
+            290 => YoloClassesOIV7::DinnerTable,
+            291 => YoloClassesOIV7::KitchenAppliance,
+            292 => YoloClassesOIV7::KitchenKnife,
+            293 => YoloClassesOIV7::KitchenUtensil,
+            294 => YoloClassesOIV7::Kitchenware,
+            295 => YoloClassesOIV7::Kite,
+            296 => YoloClassesOIV7::Knife,
+            297 => YoloClassesOIV7::Koala,
+            298 => YoloClassesOIV7::Ladder,
+            299 => YoloClassesOIV7::Ladle,
+            300 => YoloClassesOIV7::Ladybug,
+            301 => YoloClassesOIV7::Lamp,
+            302 => YoloClassesOIV7::LandVehicle,
+            303 => YoloClassesOIV7::Lantern,
+            304 => YoloClassesOIV7::Laptop,
+            305 => YoloClassesOIV7::Lavender, // (Plant)
+            306 => YoloClassesOIV7::Lemon,
+            307 => YoloClassesOIV7::Leopard,
+            308 => YoloClassesOIV7::LightBulb,
+            309 => YoloClassesOIV7::LightSwitch,
+            310 => YoloClassesOIV7::Lighthouse,
+            311 => YoloClassesOIV7::Lily,
+            312 => YoloClassesOIV7::Limousine,
+            313 => YoloClassesOIV7::Lion,
+            314 => YoloClassesOIV7::Lipstick,
+            315 => YoloClassesOIV7::Lizard,
+            316 => YoloClassesOIV7::Lobster,
+            317 => YoloClassesOIV7::Loveseat,
+            318 => YoloClassesOIV7::LuggageAndBags,
+            319 => YoloClassesOIV7::Lynx,
+            320 => YoloClassesOIV7::Magpie,
+            321 => YoloClassesOIV7::Mammal,
+            322 => YoloClassesOIV7::Man,
+            323 => YoloClassesOIV7::Mango,
+            324 => YoloClassesOIV7::Maple,
+            325 => YoloClassesOIV7::Maracas,
+            326 => YoloClassesOIV7::MarineInvertebrates,
+            327 => YoloClassesOIV7::MarineMammal,
+            328 => YoloClassesOIV7::MeasuringCup,
+            329 => YoloClassesOIV7::MechanicalFan,
+            330 => YoloClassesOIV7::MedicalEquipment,
+            331 => YoloClassesOIV7::Microphone,
+            332 => YoloClassesOIV7::MicrowaveOven,
+            333 => YoloClassesOIV7::Milk,
+            334 => YoloClassesOIV7::Miniskirt,
+            335 => YoloClassesOIV7::Mirror,
+            336 => YoloClassesOIV7::Missile,
+            337 => YoloClassesOIV7::Mixer,
+            338 => YoloClassesOIV7::MixingBowl,
+            339 => YoloClassesOIV7::MobilePhone,
+            340 => YoloClassesOIV7::Monkey,
+            341 => YoloClassesOIV7::MothsAndButterflies,
+            342 => YoloClassesOIV7::Motorcycle,
+            343 => YoloClassesOIV7::Mouse,
+            344 => YoloClassesOIV7::Muffin,
+            345 => YoloClassesOIV7::Mug,
+            346 => YoloClassesOIV7::Mule,
+            347 => YoloClassesOIV7::Mushroom,
+            348 => YoloClassesOIV7::MusicalInstrument,
+            349 => YoloClassesOIV7::MusicalKeyboard,
+            350 => YoloClassesOIV7::Nail, // (Construction)
+            351 => YoloClassesOIV7::Necklace,
+            352 => YoloClassesOIV7::Nightstand,
+            353 => YoloClassesOIV7::Oboe,
+            354 => YoloClassesOIV7::OfficeBuilding,
+            355 => YoloClassesOIV7::OfficeSupplies,
+            356 => YoloClassesOIV7::Orange,
+            357 => YoloClassesOIV7::Organ, // (Musical Instrument)
+            358 => YoloClassesOIV7::Ostrich,
+            359 => YoloClassesOIV7::Otter,
+            360 => YoloClassesOIV7::Oven,
+            361 => YoloClassesOIV7::Owl,
+            362 => YoloClassesOIV7::Oyster,
+            363 => YoloClassesOIV7::Paddle,
+            364 => YoloClassesOIV7::PalmTree,
+            365 => YoloClassesOIV7::Pancake,
+            366 => YoloClassesOIV7::Panda,
+            367 => YoloClassesOIV7::PaperCutter,
+            368 => YoloClassesOIV7::PaperTowel,
+            369 => YoloClassesOIV7::Parachute,
+            370 => YoloClassesOIV7::ParkingMeter,
+            371 => YoloClassesOIV7::Parrot,
+            372 => YoloClassesOIV7::Pasta,
+            373 => YoloClassesOIV7::Pastry,
+            374 => YoloClassesOIV7::Peach,
+            375 => YoloClassesOIV7::Pear,
+            376 => YoloClassesOIV7::Pen,
+            377 => YoloClassesOIV7::PencilCase,
+            378 => YoloClassesOIV7::PencilSharpener,
+            379 => YoloClassesOIV7::Penguin,
+            380 => YoloClassesOIV7::Perfume,
+            381 => YoloClassesOIV7::Person,
+            382 => YoloClassesOIV7::PersonalCare,
+            383 => YoloClassesOIV7::PersonalFlotationDevice,
+            384 => YoloClassesOIV7::Piano,
+            385 => YoloClassesOIV7::PicnicBasket,
+            386 => YoloClassesOIV7::PictureFrame,
+            387 => YoloClassesOIV7::Pig,
+            388 => YoloClassesOIV7::Pillow,
+            389 => YoloClassesOIV7::Pineapple,
+            390 => YoloClassesOIV7::Pitcher, // (Container)
+            391 => YoloClassesOIV7::Pizza,
+            392 => YoloClassesOIV7::PizzaCutter,
+            393 => YoloClassesOIV7::Plant,
+            394 => YoloClassesOIV7::PlasticBag,
+            395 => YoloClassesOIV7::Plate,
+            396 => YoloClassesOIV7::Platter,
+            397 => YoloClassesOIV7::PlumbingFixture,
+            398 => YoloClassesOIV7::PolarBear,
+            399 => YoloClassesOIV7::Pomegranate,
+            400 => YoloClassesOIV7::Popcorn,
+            401 => YoloClassesOIV7::Porch,
+            402 => YoloClassesOIV7::Porcupine,
+            403 => YoloClassesOIV7::Poster,
+            404 => YoloClassesOIV7::Potato,
+            405 => YoloClassesOIV7::PowerPlugsAndSockets,
+            406 => YoloClassesOIV7::PressureCooker,
+            407 => YoloClassesOIV7::Pretzel,
+            408 => YoloClassesOIV7::Printer,
+            409 => YoloClassesOIV7::Pumpkin,
+            410 => YoloClassesOIV7::PunchingBag,
+            411 => YoloClassesOIV7::Rabbit,
+            412 => YoloClassesOIV7::Raccoon,
+            413 => YoloClassesOIV7::Racket,
+            414 => YoloClassesOIV7::Radish,
+            415 => YoloClassesOIV7::Ratchet, // (Device)
+            416 => YoloClassesOIV7::Raven,
+            417 => YoloClassesOIV7::RaysAndSkates,
+            418 => YoloClassesOIV7::RedPanda,
+            419 => YoloClassesOIV7::Refrigerator,
+            420 => YoloClassesOIV7::RemoteControl,
+            421 => YoloClassesOIV7::Reptile,
+            422 => YoloClassesOIV7::Rhinoceros,
+            423 => YoloClassesOIV7::Rifle,
+            424 => YoloClassesOIV7::RingBinder,
+            425 => YoloClassesOIV7::Rocket,
+            426 => YoloClassesOIV7::RollerSkates,
+            427 => YoloClassesOIV7::Rose,
+            428 => YoloClassesOIV7::RugbyBall,
+            429 => YoloClassesOIV7::Ruler,
+            430 => YoloClassesOIV7::Salad,
+            431 => YoloClassesOIV7::SaltAndPepperShakers,
+            432 => YoloClassesOIV7::Sandal,
+            433 => YoloClassesOIV7::Sandwich,
+            434 => YoloClassesOIV7::Saucer,
+            435 => YoloClassesOIV7::Saxophone,
+            436 => YoloClassesOIV7::Scale,
+            437 => YoloClassesOIV7::Scarf,
+            438 => YoloClassesOIV7::Scissors,
+            439 => YoloClassesOIV7::Scoreboard,
+            440 => YoloClassesOIV7::Scorpion,
+            441 => YoloClassesOIV7::Screwdriver,
+            442 => YoloClassesOIV7::Sculpture,
+            443 => YoloClassesOIV7::SeaLion,
+            444 => YoloClassesOIV7::SeaTurtle,
+            445 => YoloClassesOIV7::Seafood,
+            446 => YoloClassesOIV7::Seahorse,
+            447 => YoloClassesOIV7::SeatBelt,
+            448 => YoloClassesOIV7::Segway,
+            449 => YoloClassesOIV7::ServingTray,
+            450 => YoloClassesOIV7::SewingMachine,
+            451 => YoloClassesOIV7::Shark,
+            452 => YoloClassesOIV7::Sheep,
+            453 => YoloClassesOIV7::Shelf,
+            454 => YoloClassesOIV7::Shellfish,
+            455 => YoloClassesOIV7::Shirt,
+            456 => YoloClassesOIV7::Shorts,
+            457 => YoloClassesOIV7::Shotgun,
+            458 => YoloClassesOIV7::Shower,
+            459 => YoloClassesOIV7::Shrimp,
+            460 => YoloClassesOIV7::Sink,
+            461 => YoloClassesOIV7::Skateboard,
+            462 => YoloClassesOIV7::Ski,
+            463 => YoloClassesOIV7::Skirt,
+            464 => YoloClassesOIV7::Skull,
+            465 => YoloClassesOIV7::Skunk,
+            466 => YoloClassesOIV7::Skyscraper,
+            467 => YoloClassesOIV7::SlowCooker,
+            468 => YoloClassesOIV7::Snack,
+            469 => YoloClassesOIV7::Snail,
+            470 => YoloClassesOIV7::Snake,
+            471 => YoloClassesOIV7::Snowboard,
+            472 => YoloClassesOIV7::Snowman,
+            473 => YoloClassesOIV7::Snowmobile,
+            474 => YoloClassesOIV7::Snowplow,
+            475 => YoloClassesOIV7::SoapDispenser,
+            476 => YoloClassesOIV7::Sock,
+            477 => YoloClassesOIV7::SofaBed,
+            478 => YoloClassesOIV7::Sombrero,
+            479 => YoloClassesOIV7::Sparrow,
+            480 => YoloClassesOIV7::Spatula,
+            481 => YoloClassesOIV7::SpiceRack,
+            482 => YoloClassesOIV7::Spider,
+            483 => YoloClassesOIV7::Spoon,
+            484 => YoloClassesOIV7::SportsEquipment,
+            485 => YoloClassesOIV7::SportsUniform,
+            486 => YoloClassesOIV7::Squash, //(Plant)
+            487 => YoloClassesOIV7::Squid,
+            488 => YoloClassesOIV7::Squirrel,
+            489 => YoloClassesOIV7::Stairs,
+            490 => YoloClassesOIV7::Stapler,
+            491 => YoloClassesOIV7::Starfish,
+            492 => YoloClassesOIV7::StationaryBicycle,
+            493 => YoloClassesOIV7::Stethoscope,
+            494 => YoloClassesOIV7::Stool,
+            495 => YoloClassesOIV7::StopSign,
+            496 => YoloClassesOIV7::Strawberry,
+            497 => YoloClassesOIV7::StreetLight,
+            498 => YoloClassesOIV7::Stretcher,
+            499 => YoloClassesOIV7::StudioCouch,
+            500 => YoloClassesOIV7::Submarine,
+            501 => YoloClassesOIV7::SubmarineSandwich,
+            502 => YoloClassesOIV7::Suit,
+            503 => YoloClassesOIV7::Suitcase,
+            504 => YoloClassesOIV7::SunHat,
+            505 => YoloClassesOIV7::Sunglasses,
+            506 => YoloClassesOIV7::Surfboard,
+            507 => YoloClassesOIV7::Sushi,
+            508 => YoloClassesOIV7::Swan,
+            509 => YoloClassesOIV7::SwimCap,
+            510 => YoloClassesOIV7::SwimmingPool,
+            511 => YoloClassesOIV7::Swimwear,
+            512 => YoloClassesOIV7::Sword,
+            513 => YoloClassesOIV7::Syringe,
+            514 => YoloClassesOIV7::Table,
+            515 => YoloClassesOIV7::TableTennisRacket,
+            516 => YoloClassesOIV7::TabletComputer,
+            517 => YoloClassesOIV7::Tableware,
+            518 => YoloClassesOIV7::Taco,
+            519 => YoloClassesOIV7::Tank,
+            520 => YoloClassesOIV7::Tap,
+            521 => YoloClassesOIV7::Tart,
+            522 => YoloClassesOIV7::Taxi,
+            523 => YoloClassesOIV7::Tea,
+            524 => YoloClassesOIV7::Teapot,
+            525 => YoloClassesOIV7::TeddyBear,
+            526 => YoloClassesOIV7::Telephone,
+            527 => YoloClassesOIV7::Television,
+            528 => YoloClassesOIV7::TennisBall,
+            529 => YoloClassesOIV7::TennisRacket,
+            530 => YoloClassesOIV7::Tent,
+            531 => YoloClassesOIV7::Tiara,
+            532 => YoloClassesOIV7::Tick,
+            533 => YoloClassesOIV7::Tie,
+            534 => YoloClassesOIV7::Tiger,
+            535 => YoloClassesOIV7::TinCan,
+            536 => YoloClassesOIV7::Tire,
+            537 => YoloClassesOIV7::Toaster,
+            538 => YoloClassesOIV7::Toilet,
+            539 => YoloClassesOIV7::ToiletPaper,
+            540 => YoloClassesOIV7::Tomato,
+            541 => YoloClassesOIV7::Tool,
+            542 => YoloClassesOIV7::Toothbrush,
+            543 => YoloClassesOIV7::Torch,
+            544 => YoloClassesOIV7::Tortoise,
+            545 => YoloClassesOIV7::Towel,
+            546 => YoloClassesOIV7::Tower,
+            547 => YoloClassesOIV7::Toy,
+            548 => YoloClassesOIV7::TrafficLight,
+            549 => YoloClassesOIV7::TrafficSign,
+            550 => YoloClassesOIV7::Train,
+            551 => YoloClassesOIV7::TrainingBench,
+            552 => YoloClassesOIV7::Treadmill,
+            553 => YoloClassesOIV7::Tree,
+            554 => YoloClassesOIV7::TreeHouse,
+            555 => YoloClassesOIV7::Tripod,
+            556 => YoloClassesOIV7::Trombone,
+            557 => YoloClassesOIV7::Trousers,
+            558 => YoloClassesOIV7::Truck,
+            559 => YoloClassesOIV7::Trumpet,
+            560 => YoloClassesOIV7::Turkey,
+            561 => YoloClassesOIV7::Turtle,
+            562 => YoloClassesOIV7::Umbrella,
+            563 => YoloClassesOIV7::Unicycle,
+            564 => YoloClassesOIV7::Van,
+            565 => YoloClassesOIV7::Vase,
+            566 => YoloClassesOIV7::Vegetable,
+            567 => YoloClassesOIV7::Vehicle,
+            568 => YoloClassesOIV7::VehicleRegistrationPlate,
+            569 => YoloClassesOIV7::Violin,
+            570 => YoloClassesOIV7::Volleyball, // (Ball)
+            571 => YoloClassesOIV7::Waffle,
+            572 => YoloClassesOIV7::WaffleIron,
+            573 => YoloClassesOIV7::WallClock,
+            574 => YoloClassesOIV7::Wardrobe,
+            575 => YoloClassesOIV7::WashingMachine,
+            576 => YoloClassesOIV7::WasteContainer,
+            577 => YoloClassesOIV7::Watch,
+            578 => YoloClassesOIV7::Watercraft,
+            579 => YoloClassesOIV7::Watermelon,
+            580 => YoloClassesOIV7::Weapon,
+            581 => YoloClassesOIV7::Whale,
+            582 => YoloClassesOIV7::Wheel,
+            583 => YoloClassesOIV7::Wheelchair,
+            584 => YoloClassesOIV7::Whisk,
+            585 => YoloClassesOIV7::Whiteboard,
+            586 => YoloClassesOIV7::Willow,
+            587 => YoloClassesOIV7::Window,
+            588 => YoloClassesOIV7::WindowBlind,
+            589 => YoloClassesOIV7::Wine,
+            590 => YoloClassesOIV7::WineGlass,
+            591 => YoloClassesOIV7::WineRack,
+            592 => YoloClassesOIV7::WinterMelon,
+            593 => YoloClassesOIV7::Wok,
+            594 => YoloClassesOIV7::Woman,
+            595 => YoloClassesOIV7::WoodBurningStove,
+            596 => YoloClassesOIV7::Woodpecker,
+            597 => YoloClassesOIV7::Worm,
+            598 => YoloClassesOIV7::Wrench,
+            599 => YoloClassesOIV7::Zebra,
+            600 => YoloClassesOIV7::Zucchini,
+            _ => panic!("The Label returned a bigger number than what was expected"),
+        }
+    }
 }
