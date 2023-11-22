@@ -5,23 +5,15 @@ pub mod server;
 pub mod tracking;
 
 #[derive(Serialize, Deserialize)]
-pub enum Processing {
+pub enum ProcessingType {
     Dehaze,
     ObjectDetection,
     Tracking,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct HardwareMonitor {
-    pub processing: Processing, //% cpu usage
-    pub cpu_temp: f32,
-    pub load: f32,
-    pub runtime: u32, //ms
-    pub uptime: u32,  //ms
-}
-
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ImageProperties {
+    pub img_id: usize,
     pub origin_width: u32,
     pub origin_height: u32,
     pub resize_width: u32,
@@ -30,8 +22,9 @@ pub struct ImageProperties {
 }
 
 impl ImageProperties {
-    pub fn new(input_image: DynamicImage) -> Self {
+    pub fn new(input_image: DynamicImage, img_id: usize) -> Self {
         ImageProperties {
+            img_id,
             origin_width: input_image.width(),
             origin_height: input_image.height(),
             resize_width: input_image.width(),
@@ -40,8 +33,14 @@ impl ImageProperties {
         }
     }
 
-    pub fn new_scaled(input_image: DynamicImage, new_width: u32, new_height: u32) -> Self {
+    pub fn new_scaled(
+        input_image: DynamicImage,
+        img_id: usize,
+        new_width: u32,
+        new_height: u32,
+    ) -> Self {
         ImageProperties {
+            img_id,
             origin_width: input_image.width(),
             origin_height: input_image.height(),
             resize_width: new_width,

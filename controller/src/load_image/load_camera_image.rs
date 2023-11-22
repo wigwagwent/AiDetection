@@ -1,4 +1,6 @@
-use super::LoadImages;
+use crate::ImageStore;
+
+use super::{LoadImageErr, LoadImages};
 
 pub struct CameraImage {}
 
@@ -9,7 +11,7 @@ impl Default for CameraImage {
 }
 
 impl LoadImages for CameraImage {
-    fn get_image(&mut self) -> image::DynamicImage {
+    fn get_image(&mut self, _store: &ImageStore) -> Result<(), LoadImageErr> {
         todo!()
     }
 }

@@ -1346,6 +1346,7 @@ dependencies = [
 name = "shared-types"
 version = "0.1.0"
 dependencies = [
+ "dashmap",
  "image",
  "serde",
  "tokio",

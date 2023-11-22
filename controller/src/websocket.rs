@@ -1,15 +1,16 @@
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
-use image::Rgba;
-use imageproc::{drawing::draw_hollow_rect_mut, rect::Rect};
-use shared_types::{client::ReturnData, server::ClientData};
+use shared_types::{
+    client::{ReturnData, ReturnDataType},
+    server::{ClientData, ProcessingStatus},
+};
 use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use warp::filters::ws::{Message, WebSocket};
 
-use crate::{Clients, NEXT_CLIENT_ID};
+use crate::{Clients, ImageStore, NEXT_CLIENT_ID};
 
-pub async fn client_connected(ws: WebSocket, clients: Clients) {
+pub async fn client_connected(ws: WebSocket, clients: Clients, image_store: ImageStore) {
     // Use a counter to assign a new unique ID for this user.
     let my_id = NEXT_CLIENT_ID.fetch_add(1, Ordering::Relaxed);
 
@@ -36,7 +37,8 @@ pub async fn client_connected(ws: WebSocket, clients: Clients) {
 
     let data = ClientData {
         link: tx,
-        busy: AtomicBool::new(false),
+        client_busy: AtomicBool::new(false),
+        client_type: None,
     };
 
     // Save the sender in our list of connected users.
@@ -55,7 +57,7 @@ pub async fn client_connected(ws: WebSocket, clients: Clients) {
                 break;
             }
         };
-        user_message(my_id, msg, &clients).await;
+        user_message(my_id, msg, &clients, &image_store).await;
     }
 
     // user_ws_rx stream will keep processing as long as the user stays
@@ -63,55 +65,33 @@ pub async fn client_connected(ws: WebSocket, clients: Clients) {
     user_disconnected(my_id, &clients).await;
 }
 
-async fn user_message(my_id: usize, msg: Message, clients: &Clients) {
+async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store: &ImageStore) {
     // Skip any non-Text messages...
     if msg.is_text() {
         let raw_msg = msg.to_str().expect("We know its a string");
         let new_msg = format!("<User#{}>: {}", my_id, raw_msg);
         println!("{}", new_msg);
     } else if msg.is_binary() {
-        clients
-            .get(&my_id)
-            .unwrap()
-            .busy
-            .store(false, std::sync::atomic::Ordering::Relaxed);
         let data: ReturnData = bincode::deserialize(msg.as_bytes()).unwrap();
 
-        //
-        //
-        //
-        //
-        //
-        let mut img = match image::open("img.path") {
-            Ok(image) => image,
-            Err(error) => {
-                panic!("Image could not be read, {}", error);
+        match data.data_type {
+            ReturnDataType::ListOfItems(objects) => {
+                clients
+                    .get(&my_id)
+                    .unwrap()
+                    .client_busy
+                    .store(false, std::sync::atomic::Ordering::Relaxed);
+
+                let mut store = image_store.get_mut(&data.img_id).unwrap();
+
+                store.detection_status = ProcessingStatus::Finished;
+                store.tracked = Some(objects)
+            }
+
+            ReturnDataType::ClientType(client_type) => {
+                clients.get_mut(&my_id).unwrap().client_type = Some(client_type)
             }
         };
-
-        let rectangles = match data.data_type {
-            shared_types::client::ReturnDataType::ListOfItems(rec) => rec,
-        };
-
-        for rectangle in rectangles {
-            draw_hollow_rect_mut(
-                &mut img,
-                Rect::at(rectangle.x_bottom_corner, rectangle.y_bottom_corner)
-                    .of_size(rectangle.x_length, rectangle.y_height),
-                Rgba([97, 51, 47, 0]),
-            );
-        }
-
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //let ser = serde_json::to_string_pretty(&data).expect("this to work");
-        //println!("{}", ser);
     } else {
         return;
     }

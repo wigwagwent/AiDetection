@@ -36,8 +36,10 @@ pub fn receive_img(raw_img: Vec<u8>, tx: UnboundedSender<Message>) {
     // let _ = real_img.save("test.jpg");
     let total_time = start_time.elapsed();
     let response: ReturnData = ReturnData {
-        data_type: ReturnDataType::ListOfItems(output),
+        img_id: img.img_id,
+        process_type: shared_types::ProcessingType::ObjectDetection,
         time_cost: total_time,
+        data_type: ReturnDataType::ListOfItems(output),
     };
 
     tx.unbounded_send(Message::Binary(bincode::serialize(&response).unwrap()))
