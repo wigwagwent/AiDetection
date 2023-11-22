@@ -4,6 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default = ["load-file"]
+
+
+# Currently Supported ways to get images
+load-file = []
+load-camera = []
+
 
 [dependencies]
 dashmap = { version = "5.5.3", features = ["serde"] }

@@ -2,13 +2,12 @@ mod controller;
 mod websocket;
 
 use dashmap::DashMap;
-use shared_types::server::{ClientData, SentData, SentDataType};
-use shared_types::ImageProperties;
+use shared_types::server::ClientData;
 use std::sync::atomic::AtomicUsize;
-use std::time::Duration;
-use std::{fs, sync::Arc, thread};
-use warp::ws::Message;
+use std::{sync::Arc, thread};
 use warp::Filter;
+
+use crate::controller::controller_thread;
 
 static NEXT_CLIENT_ID: AtomicUsize = AtomicUsize::new(1);
 
@@ -18,70 +17,9 @@ type Clients = Arc<DashMap<usize, ClientData>>;
 async fn main() {
     let clients = Clients::default();
 
-    //Camera Manager
-
-    //Controller Manager
-
-    //Test stuff
-    //
-    let send_clients = clients.clone();
-
-    thread::spawn(move || loop {
-        let folder_path = "/home/carter/Documents/Save_The_Sea_Turtles/MobileNetV3/Training/turtle"; //tutle photos
-        let framerate: f32 = 30.0;
-        let mut image_read: u32 = 0;
-        let mut images_processed: u32 = 0;
-
-        // Read the contents of the folder
-        if let Ok(entries) = fs::read_dir(folder_path) {
-            for entry in entries {
-                if let Ok(entry) = entry {
-                    thread::sleep(Duration::from_secs_f32((1.0 / 60.0) * (60.0 / framerate)));
-
-                    let img = match image::open(entry.path()) {
-                        Ok(image) => image,
-                        Err(error) => {
-                            println!("Image could not be read, {}", error);
-                            continue;
-                        }
-                    };
-
-                    image_read += 1;
-                    if image_read % 100 == 0 {
-                        println!("Images Read: {}", image_read);
-                    }
-
-                    for client in send_clients.iter() {
-                        let (&_uid, tx) = client.pair();
-
-                        if !tx.busy.load(std::sync::atomic::Ordering::Relaxed) {
-                            let raw_img = ImageProperties::new_scaled(img.clone(), 640, 640);
-                            let raw_data = bincode::serialize(&raw_img).unwrap();
-
-                            let send_message = SentData {
-                                data_type: SentDataType::Image,
-                                raw_data,
-                            };
-                            let send_message = bincode::serialize(&send_message).unwrap();
-                            if send_message.len() > 16777216 {
-                                println!("Oversized package detected");
-                                continue;
-                            }
-                            images_processed += 1;
-                            let _ = tx.link.send(Message::binary(send_message));
-                            tx.busy.store(true, std::sync::atomic::Ordering::Relaxed);
-                        }
-                    }
-                }
-            }
-        } else {
-            println!("Failed to read the folder contents.");
-        }
-        println!(
-            "Looped through every image, read: {}, processed: {}",
-            image_read, images_processed
-        );
-        thread::sleep(Duration::from_secs(360));
+    thread::spawn({
+        let controller_clients = clients.clone();
+        move || controller_thread(controller_clients)
     });
 
     let clients = warp::any().map(move || clients.clone());
