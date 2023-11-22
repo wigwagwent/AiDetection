@@ -75,7 +75,7 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
         let data: ReturnData = bincode::deserialize(msg.as_bytes()).unwrap();
 
         match data.data_type {
-            ReturnDataType::ListOfItems(objects) => {
+            ReturnDataType::ListOfItemsDetected(objects) => {
                 clients
                     .get(&my_id)
                     .unwrap()
@@ -85,7 +85,8 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
                 let mut store = image_store.get_mut(&data.img_id).unwrap();
 
                 store.detection_status = ProcessingStatus::Finished;
-                store.tracked = Some(objects)
+                store.tracked = Some(objects);
+                post_detection(image_store, &my_id)
             }
 
             ReturnDataType::ClientType(client_type) => {
@@ -111,4 +112,8 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
 
 async fn user_disconnected(my_id: usize, users: &Clients) {
     users.remove(&my_id);
+}
+
+fn post_detection(image_store: &ImageStore, current_img: &usize) {
+    image_store.retain(|k, _| k >= current_img);
 }

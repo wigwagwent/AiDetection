@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["model-yolov8-s-oiv7"]
+default = ["model-yolov8-s"]
 
 
 # Currently Supported models

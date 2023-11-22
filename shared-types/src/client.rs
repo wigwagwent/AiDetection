@@ -4,14 +4,13 @@ use tokio::time::Duration;
 
 #[derive(Serialize, Deserialize)]
 pub enum ReturnDataType {
-    ListOfItems(Vec<TrackingResult>),
+    ListOfItemsDetected(Vec<TrackingResult>),
     ClientType(ProcessingType),
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct ReturnData {
     pub img_id: usize,
-    pub process_type: ProcessingType,
     pub time_cost: Duration,
     pub data_type: ReturnDataType,
 }

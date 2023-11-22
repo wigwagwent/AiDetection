@@ -74,6 +74,13 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
                 None => continue,
             }
         }
+
+        if img_store.len() > 250 {
+            let next_count = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
+            println!("Dropping images, only keeping the last 200");
+            img_store.retain(|k, _| k > &(next_count - 200));
+        }
+
         thread::sleep(Duration::from_secs_f32(0.01)); //check 100 times per second
     }
 }
