@@ -163,15 +163,15 @@ impl ObjectDetection for Yolo {
     }
 }
 
-// Function calculates "Intersection-over-union" coefficient for specified two boxes
-// https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/.
-// Returns Intersection over union ratio as a float number
+/// Function calculates "Intersection-over-union" coefficient for specified two boxes
+/// https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/.
+/// Returns Intersection over union ratio as a float number
 fn iou(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     return intersection(box1, box2) / union(box1, box2);
 }
 
-// Function calculates union area of two boxes
-// Returns Area of the boxes union as a float number
+/// Function calculates union area of two boxes
+/// Returns Area of the boxes union as a float number
 fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     let box1_area = (box1.x_length as i32 - box1.x_bottom_corner)
         * (box1.y_height as i32 - box1.y_bottom_corner);
@@ -180,8 +180,8 @@ fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     return box1_area as f32 + box2_area as f32 - intersection(box1, box2);
 }
 
-// Function calculates intersection area of two boxes
-// Returns Area of intersection of the boxes as a float number
+/// Function calculates intersection area of two boxes
+/// Returns Area of intersection of the boxes as a float number
 fn intersection(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     let x1 = box1.x_bottom_corner.max(box2.x_bottom_corner);
     let y1 = box1.y_bottom_corner.max(box2.y_bottom_corner);
