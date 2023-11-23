@@ -75,7 +75,7 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
 
                 mut_store.detection_status = ProcessingStatus::Finished;
                 mut_store.tracked = Some(objects);
-                post_detection(&mut store, &my_id)
+                post_detection(&mut store, &data.img_id)
             }
 
             ReturnDataType::ClientType(client_type) => {
