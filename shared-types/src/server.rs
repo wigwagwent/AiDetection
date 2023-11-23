@@ -24,7 +24,7 @@ pub struct ClientData {
     pub client_type: Option<ProcessingType>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum ProcessingStatus {
     NotStarted,
     Started,

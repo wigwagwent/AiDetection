@@ -14,7 +14,7 @@ pub struct TrackingResult {
     pub probability: f32,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy)]
+#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy, Debug)]
 pub enum ItemLabel {
     YoloClasses80(YoloClasses80),
     YoloClassesOIV7(YoloClassesOIV7),
