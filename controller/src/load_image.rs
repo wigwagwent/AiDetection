@@ -8,11 +8,7 @@ mod load_camera_image;
 mod load_local_image;
 
 pub trait LoadImages {
-    fn get_image(&mut self, store: &ImageStore) -> Result<(), LoadImageErr>;
-}
-
-pub enum LoadImageErr {
-    NotFound(String),
+    fn get_image(&mut self, store: &ImageStore);
 }
 
 fn new_load_images() -> impl LoadImages {
@@ -28,14 +24,7 @@ pub fn load_new_images_thread(store: ImageStore) {
     let mut load = new_load_images();
 
     loop {
-        let result = load.get_image(&store);
-
-        match result {
-            Ok(_) => continue,
-            Err(err) => match err {
-                LoadImageErr::NotFound(path) => println!("Image not found at: '{}'", path),
-            },
-        }
+        load.get_image(&store);
 
         println!("End of loop, starting over in 1 minute");
         thread::sleep(Duration::from_secs(60));

@@ -59,7 +59,7 @@ pub fn image_html(image_store: ImageStore) -> String {
                     <img id="exampleImage" src="data:image/png;base64,{}" alt="Example Image">
                     <p>{}</p>
                     <script>
-                        setTimeout(function () {{ location.reload(true); }}, 5000);
+                        setTimeout(function () {{ location.reload(true); }}, 500);
                     </script>
                 </body>
             </html>
