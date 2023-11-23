@@ -4,7 +4,9 @@ mod websocket;
 
 use dashmap::DashMap;
 use shared_types::server::{ClientData, ImageManager};
+use std::collections::HashMap;
 use std::sync::atomic::AtomicUsize;
+use std::sync::Mutex;
 use std::{sync::Arc, thread};
 use warp::Filter;
 
@@ -15,7 +17,7 @@ static NEXT_CLIENT_ID: AtomicUsize = AtomicUsize::new(1);
 static NEXT_IMAGE_ID: AtomicUsize = AtomicUsize::new(1);
 
 type Clients = Arc<DashMap<usize, ClientData>>;
-type ImageStore = Arc<DashMap<usize, ImageManager>>;
+type ImageStore = Arc<Mutex<HashMap<usize, ImageManager>>>;
 
 #[tokio::main]
 async fn main() {

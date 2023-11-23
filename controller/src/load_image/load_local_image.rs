@@ -49,7 +49,8 @@ impl LoadImages for LocalImage {
                         tracking_status: ProcessingStatus::NotStarted,
                         detection_status: ProcessingStatus::NotStarted,
                     };
-                    store.insert(img_id, new_img_store_val);
+                    let mut mut_store = store.lock().unwrap();
+                    mut_store.insert(img_id, new_img_store_val);
                     NEXT_IMAGE_ID.store(img_id + 1, std::sync::atomic::Ordering::Relaxed);
                     count += 1;
                     if count % 100 == 0 {
