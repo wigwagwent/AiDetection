@@ -16,6 +16,7 @@ async fn main() {
     let (tx, rx) = futures_channel::mpsc::unbounded();
     let tx2 = tx.clone();
 
+    // Send to the server saying we run object detection
     thread::spawn(move || {
         thread::sleep(Duration::from_secs(1));
         let client_type = ReturnData {

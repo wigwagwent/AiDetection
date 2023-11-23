@@ -11,7 +11,6 @@ use warp::filters::ws::{Message, WebSocket};
 use crate::{Clients, ImageStore, NEXT_CLIENT_ID};
 
 pub async fn client_connected(ws: WebSocket, clients: Clients, image_store: ImageStore) {
-    // Use a counter to assign a new unique ID for this user.
     let my_id = NEXT_CLIENT_ID.fetch_add(1, Ordering::Relaxed);
 
     eprintln!("new processing node: {}", my_id);
@@ -41,14 +40,8 @@ pub async fn client_connected(ws: WebSocket, clients: Clients, image_store: Imag
         client_type: None,
     };
 
-    // Save the sender in our list of connected users.
     clients.insert(my_id, data);
 
-    // Return a `Future` that is basically a state machine managing
-    // this specific user's connection.
-
-    // Every time the user sends a message, broadcast it to
-    // all other users...
     while let Some(result) = client_ws_rx.next().await {
         let msg = match result {
             Ok(msg) => msg,
@@ -59,14 +52,10 @@ pub async fn client_connected(ws: WebSocket, clients: Clients, image_store: Imag
         };
         user_message(my_id, msg, &clients, &image_store).await;
     }
-
-    // user_ws_rx stream will keep processing as long as the user stays
-    // connected. Once they disconnect, then...
     user_disconnected(my_id, &clients).await;
 }
 
 async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store: &ImageStore) {
-    // Skip any non-Text messages...
     if msg.is_text() {
         let raw_msg = msg.to_str().expect("We know its a string");
         let new_msg = format!("<Node#{}>: {}", my_id, raw_msg);
@@ -97,18 +86,6 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
     } else {
         return;
     }
-
-    // New message from this user, send it to everyone else (except same uid)...
-    // for item in clients.iter() {
-    //     let (&uid, tx) = item.pair();
-    //     if my_id != uid {
-    //         if let Err(_disconnected) = tx.send(Message::text(new_msg.clone())) {
-    //             // The tx is disconnected, our `user_disconnected` code
-    //             // should be happening in another task, nothing more to
-    //             // do here.
-    //         }
-    //     }
-    // }
 }
 
 async fn user_disconnected(my_id: usize, users: &Clients) {
