@@ -59,9 +59,9 @@ impl LoadImages for LocalImage {
                 }
             }
 
-            return Ok(());
+            Ok(())
         } else {
-            return Err(LoadImageErr::NotFound(format!("Folder: {}", self.path)));
+            Err(LoadImageErr::NotFound(format!("Folder: {}", self.path)))
         }
     }
 }

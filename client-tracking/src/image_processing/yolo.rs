@@ -102,7 +102,7 @@ impl ObjectDetection for Yolo {
         let mut boxes = Vec::new();
         let output = self.processed_img.slice(s![.., .., 0]);
         for row in output.axis_iter(Axis(0)) {
-            let row: Vec<_> = row.iter().map(|x| *x).collect();
+            let row: Vec<_> = row.iter().copied().collect();
             let (class_id, prob) = row
                 .iter()
                 .skip(4)
@@ -153,15 +153,14 @@ impl ObjectDetection for Yolo {
 
         let mut result = Vec::new();
 
-        while boxes.len() > 0 {
+        while !boxes.is_empty() {
             result.push(boxes[0]);
             boxes = boxes
                 .iter()
-                .filter(|box1| iou(&boxes[0], box1) < 0.7)
-                .map(|x| *x)
+                .filter(|box1| iou(&boxes[0], box1) < 0.7).copied()
                 .collect()
         }
-        return result;
+        result
     }
 }
 
@@ -169,7 +168,7 @@ impl ObjectDetection for Yolo {
 /// https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/.
 /// Returns Intersection over union ratio as a float number
 fn iou(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
-    return intersection(box1, box2) / union(box1, box2);
+    intersection(box1, box2) / union(box1, box2)
 }
 
 /// Function calculates union area of two boxes
@@ -177,7 +176,7 @@ fn iou(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
 fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     let box1_area = box1.x_length * box1.y_height;
     let box2_area = box2.x_length * box2.y_height;
-    return (box1_area + box2_area) as f32 - intersection(box1, box2);
+    (box1_area + box2_area) as f32 - intersection(box1, box2)
 }
 
 /// Function calculates intersection area of two boxes
@@ -189,5 +188,5 @@ fn intersection(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
         .min(box2.x_bottom_corner + box2.x_length as i32);
     let y_top = (box1.y_bottom_corner + box1.y_height as i32)
         .min(box2.y_bottom_corner + box2.y_height as i32);
-    return ((x_top - x_bottom) as f32) * ((y_top - y_bottom) as f32);
+    ((x_top - x_bottom) as f32) * ((y_top - y_bottom) as f32)
 }
