@@ -11,7 +11,7 @@ pub struct TrackingResult {
     pub x_length: u32,
     pub y_height: u32,
     pub label: ItemLabel,
-    pub probablility: f32,
+    pub probability: f32,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy)]

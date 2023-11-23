@@ -7,7 +7,7 @@ use shared_types::tracking::{
     yolo::{YoloClasses80, YoloClassesOIV7},
     TrackingResult,
 };
-use std::{sync::Arc, vec};
+use std::{cmp::Ordering, sync::Arc, vec};
 
 use super::ObjectDetection;
 
@@ -18,22 +18,22 @@ lazy_static! {
         #[cfg(feature = "model-yolov8-s")]
         let session = SessionBuilder::new(&env)
             .unwrap()
-            .with_model_from_file("model-yolov8-s.onnx")
+            .with_model_from_file("models/model-yolov8-s.onnx")
             .unwrap();
         #[cfg(feature = "model-yolov8-n")]
         let session = SessionBuilder::new(&env)
             .unwrap()
-            .with_model_from_file("model-yolov8-n.onnx")
+            .with_model_from_file("models/model-yolov8-n.onnx")
             .unwrap();
         #[cfg(feature = "model-yolov8-m")]
         let session = SessionBuilder::new(&env)
             .unwrap()
-            .with_model_from_file("model-yolov8-m.onnx")
+            .with_model_from_file("models/model-yolov8-m.onnx")
             .unwrap();
         #[cfg(feature = "model-yolov8-s-oiv7")]
         let session = SessionBuilder::new(&env)
             .unwrap()
-            .with_model_from_file("model-yolov8-s-oiv7.onnx")
+            .with_model_from_file("models/model-yolov8-s-oiv7.onnx")
             .unwrap();
         session
     };
@@ -140,17 +140,19 @@ impl ObjectDetection for Yolo {
                 x_length: w as u32,
                 y_height: h as u32,
                 label,
-                probablility: prob,
+                probability: prob,
             };
             boxes.push(item_box);
         }
 
-        boxes.sort_by(|box1, box2| {
-            box2.label
-                .partial_cmp(&box1.label)
-                .expect("I hope this works")
+        boxes.sort_by(|a, b| {
+            b.probability
+                .partial_cmp(&a.probability)
+                .unwrap_or(Ordering::Equal)
         });
+
         let mut result = Vec::new();
+
         while boxes.len() > 0 {
             result.push(boxes[0]);
             boxes = boxes
@@ -173,21 +175,19 @@ fn iou(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
 /// Function calculates union area of two boxes
 /// Returns Area of the boxes union as a float number
 fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
-    let box1_area = (box1.x_length as i32 - box1.x_bottom_corner)
-        * (box1.y_height as i32 - box1.y_bottom_corner);
-    let box2_area = (box2.x_length as i32 - box2.x_bottom_corner)
-        * (box2.y_height as i32 - box2.y_bottom_corner);
-    return box1_area as f32 + box2_area as f32 - intersection(box1, box2);
+    let box1_area = box1.x_length * box1.y_height;
+    let box2_area = box2.x_length * box2.y_height;
+    return (box1_area + box2_area) as f32 - intersection(box1, box2);
 }
 
 /// Function calculates intersection area of two boxes
 /// Returns Area of intersection of the boxes as a float number
 fn intersection(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
-    let x1 = box1.x_bottom_corner.max(box2.x_bottom_corner);
-    let y1 = box1.y_bottom_corner.max(box2.y_bottom_corner);
-    let x2 = (box1.x_bottom_corner + box1.x_length as i32)
+    let x_bottom = box1.x_bottom_corner.max(box2.x_bottom_corner);
+    let y_bottom = box1.y_bottom_corner.max(box2.y_bottom_corner);
+    let x_top = (box1.x_bottom_corner + box1.x_length as i32)
         .min(box2.x_bottom_corner + box2.x_length as i32);
-    let y2 = (box1.y_bottom_corner + box1.y_height as i32)
+    let y_top = (box1.y_bottom_corner + box1.y_height as i32)
         .min(box2.y_bottom_corner + box2.y_height as i32);
-    return (x2 - x1) as f32 * (y2 - y1) as f32;
+    return ((x_top - x_bottom) as f32) * ((y_top - y_bottom) as f32);
 }

@@ -4,6 +4,7 @@ use shared_types::{
     server::{SentData, SentDataType},
     ImageProperties, ProcessingType,
 };
+use warp::filters::ws::Message;
 
 use crate::{Clients, ImageStore, NEXT_IMAGE_ID};
 
@@ -47,7 +48,13 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
                             raw_data,
                         };
 
-                        send_message_to_client(send_message);
+                        let send_message = bincode::serialize(&send_message).unwrap();
+                        if send_message.len() > 16777216 {
+                            println!("Oversized package detected");
+                            return;
+                        }
+
+                        client.link.send(Message::binary(send_message)).unwrap();
                         client
                             .client_busy
                             .store(true, std::sync::atomic::Ordering::Relaxed);
@@ -82,13 +89,5 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
         }
 
         thread::sleep(Duration::from_secs_f32(0.01)); //check 100 times per second
-    }
-}
-
-fn send_message_to_client(send_message: SentData) {
-    let send_message = bincode::serialize(&send_message).unwrap();
-    if send_message.len() > 16777216 {
-        println!("Oversized package detected");
-        return;
     }
 }
