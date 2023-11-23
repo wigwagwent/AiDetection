@@ -27,35 +27,33 @@ impl LoadImages for LocalImage {
 
         // Read the contents of the folder
         if let Ok(entries) = fs::read_dir(self.path.clone()) {
-            for entry in entries {
-                if let Ok(entry) = entry {
-                    thread::sleep(Duration::from_secs_f32(
-                        (1.0 / 60.0) * (60.0 / self.framerate),
-                    ));
-                    let img = match image::open(entry.path()) {
-                        Ok(image) => image,
-                        Err(error) => {
-                            println!("Image could not be read, {}", error);
-                            continue;
-                        }
-                    };
-
-                    let img_id = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
-                    let new_img_store_val: ImageManager = ImageManager {
-                        raw: img,
-                        dehazed: None,
-                        dehazed_status: ProcessingStatus::NotStarted,
-                        tracked: None,
-                        tracking_status: ProcessingStatus::NotStarted,
-                        detection_status: ProcessingStatus::NotStarted,
-                    };
-                    let mut mut_store = store.lock().unwrap();
-                    mut_store.insert(img_id, new_img_store_val);
-                    NEXT_IMAGE_ID.store(img_id + 1, std::sync::atomic::Ordering::Relaxed);
-                    count += 1;
-                    if count % 100 == 0 {
-                        println!("Images Read: {}", count);
+            for entry in entries.into_iter().flatten() {
+                thread::sleep(Duration::from_secs_f32(
+                    (1.0 / 60.0) * (60.0 / self.framerate),
+                ));
+                let img = match image::open(entry.path()) {
+                    Ok(image) => image,
+                    Err(error) => {
+                        println!("Image could not be read, {}", error);
+                        continue;
                     }
+                };
+
+                let img_id = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
+                let new_img_store_val: ImageManager = ImageManager {
+                    raw: img,
+                    dehazed: None,
+                    dehazed_status: ProcessingStatus::NotStarted,
+                    tracked: None,
+                    tracking_status: ProcessingStatus::NotStarted,
+                    detection_status: ProcessingStatus::NotStarted,
+                };
+                let mut mut_store = store.lock().unwrap();
+                mut_store.insert(img_id, new_img_store_val);
+                NEXT_IMAGE_ID.store(img_id + 1, std::sync::atomic::Ordering::Relaxed);
+                count += 1;
+                if count % 100 == 0 {
+                    println!("Images Read: {}", count);
                 }
             }
 

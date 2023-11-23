@@ -16,10 +16,10 @@ pub enum LoadImageErr {
 }
 
 fn new_load_images() -> impl LoadImages {
-    #[cfg(any(feature = "load-file"))]
+    #[cfg(feature = "load-file")]
     let load = LocalImage::default();
 
-    #[cfg(any(feature = "load-camera"))]
+    #[cfg(feature = "load-camera")]
     let load = CameraImage::default();
     load
 }

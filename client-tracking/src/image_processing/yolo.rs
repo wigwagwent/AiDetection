@@ -155,10 +155,8 @@ impl ObjectDetection for Yolo {
 
         while !boxes.is_empty() {
             result.push(boxes[0]);
-            boxes = boxes
-                .iter()
-                .filter(|box1| iou(&boxes[0], box1) < 0.7).copied()
-                .collect()
+            let first_result = boxes[0];
+            boxes.retain(|box1| iou(&first_result, box1) < 0.7);
         }
         result
     }

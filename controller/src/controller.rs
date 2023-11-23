@@ -19,11 +19,8 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
             }
 
             match &client.client_type {
-                Some(client_type) => match client_type {
-                    ProcessingType::Dehaze => {}
-                    _ => continue,
-                },
-                None => continue,
+                Some(ProcessingType::Dehaze) => todo!(),
+                _ => continue,
             }
         }
 
@@ -36,33 +33,30 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
             }
 
             match &client.client_type {
-                Some(client_type) => match client_type {
-                    ProcessingType::ObjectDetection => {
-                        let last_img = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed) - 1;
-                        let new_img_store = &img_store.lock().unwrap();
-                        let img = &new_img_store.get(&last_img).unwrap().raw;
-                        let raw_img = ImageProperties::new_scaled(img.clone(), last_img, 640, 640);
-                        let raw_data = bincode::serialize(&raw_img).unwrap();
+                Some(ProcessingType::ObjectDetection) => {
+                    let last_img = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed) - 1;
+                    let new_img_store = &img_store.lock().unwrap();
+                    let img = &new_img_store.get(&last_img).unwrap().raw;
+                    let raw_img = ImageProperties::new_scaled(img.clone(), last_img, 640, 640);
+                    let raw_data = bincode::serialize(&raw_img).unwrap();
 
-                        let send_message = SentData {
-                            data_type: SentDataType::Image,
-                            raw_data,
-                        };
+                    let send_message = SentData {
+                        data_type: SentDataType::Image,
+                        raw_data,
+                    };
 
-                        let send_message = bincode::serialize(&send_message).unwrap();
-                        if send_message.len() > 16777216 {
-                            println!("Oversized package detected");
-                            continue;
-                        }
-
-                        client.link.send(Message::binary(send_message)).unwrap();
-                        client
-                            .client_busy
-                            .store(true, std::sync::atomic::Ordering::Relaxed);
+                    let send_message = bincode::serialize(&send_message).unwrap();
+                    if send_message.len() > 16777216 {
+                        println!("Oversized package detected");
+                        continue;
                     }
-                    _ => continue,
-                },
-                None => continue,
+
+                    client.link.send(Message::binary(send_message)).unwrap();
+                    client
+                        .client_busy
+                        .store(true, std::sync::atomic::Ordering::Relaxed);
+                }
+                _ => continue,
             }
         }
 
@@ -75,11 +69,8 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
             }
 
             match &client.client_type {
-                Some(client_type) => match client_type {
-                    ProcessingType::Tracking => {}
-                    _ => continue,
-                },
-                None => continue,
+                Some(ProcessingType::Tracking) => todo!(),
+                _ => continue,
             }
         }
 

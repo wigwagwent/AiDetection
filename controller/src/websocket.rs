@@ -62,7 +62,6 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
         println!("{}", new_msg);
     } else if msg.is_binary() {
         let data: ReturnData = bincode::deserialize(msg.as_bytes()).unwrap();
-        println!("New bin");
         match data.data_type {
             ReturnDataType::ListOfItemsDetected(objects) => {
                 clients

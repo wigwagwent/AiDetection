@@ -13,12 +13,10 @@ pub fn image_html(image_store: ImageStore) -> String {
     let images = image_store.lock().unwrap();
     let mut latest_processed: Option<usize> = None;
     for (id, image) in images.iter() {
-        if image.detection_status == ProcessingStatus::Finished {
-            if latest_processed.is_none() {
-                latest_processed = Some(id.clone());
-            } else if id > &latest_processed.expect("empty check already happend") {
-                latest_processed = Some(id.clone());
-            }
+        if image.detection_status == ProcessingStatus::Finished
+            && (latest_processed.is_none() || id > &latest_processed.unwrap())
+        {
+            latest_processed = Some(*id);
         }
     }
 
