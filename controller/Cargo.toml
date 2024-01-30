@@ -5,12 +5,12 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["load-file"]
+default = ["load-camera"]
 
 
 # Currently Supported ways to get images
 load-file = []
-load-camera = []
+load-camera = ["dep:rascam"]
 
 
 [dependencies]
@@ -26,3 +26,4 @@ futures-util = { version = "0.3.29" }
 image = { version = "0.24.7" }
 imageproc = { version = "0.23.0" }
 shared-types = { path = "../shared-types" }
+rascam = { git = "https://github.com/pedrosland/rascam", optional = true }

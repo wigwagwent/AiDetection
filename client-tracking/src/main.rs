@@ -11,7 +11,7 @@ use tokio_tungstenite::{connect_async, tungstenite::Message};
 
 #[tokio::main]
 async fn main() {
-    let url = url::Url::parse("ws://127.0.0.1:3030/websocket").unwrap();
+    let url = url::Url::parse("ws://192.168.8.129:3030/websocket").unwrap();
 
     let (tx, rx) = futures_channel::mpsc::unbounded();
     let tx2 = tx.clone();

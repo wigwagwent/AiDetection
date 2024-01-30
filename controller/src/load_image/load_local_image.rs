@@ -14,8 +14,7 @@ impl Default for LocalImage {
     fn default() -> Self {
         Self {
             framerate: 15.0,
-            path: "/home/carter/Documents/Internship/Images/daySequence2/daySequence2/frames"
-                .into(),
+            path: "local-images/frames".into(),
         }
     }
 }
