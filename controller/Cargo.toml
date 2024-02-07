@@ -10,7 +10,7 @@ default = ["load-camera"]
 
 # Currently Supported ways to get images
 load-file = []
-load-camera = ["dep:rascam"]
+load-camera = ["dep:libcamera"]
 
 
 [dependencies]
@@ -26,4 +26,4 @@ futures-util = { version = "0.3.29" }
 image = { version = "0.24.7" }
 imageproc = { version = "0.23.0" }
 shared-types = { path = "../shared-types" }
-rascam = { git = "https://github.com/pedrosland/rascam", optional = true }
+libcamera = { version = "0.2.3", optional = true }

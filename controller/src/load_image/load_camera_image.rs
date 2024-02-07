@@ -1,40 +1,121 @@
-use rascam::{info, SimpleCamera};
+use image::DynamicImage;
+use libcamera::{
+    camera::{ActiveCamera, CameraConfiguration},
+    camera_manager::CameraManager,
+    framebuffer::AsFrameBuffer,
+    framebuffer_allocator::{FrameBuffer, FrameBufferAllocator},
+    framebuffer_map::MemoryMappedFrameBuffer,
+    pixel_format::PixelFormat,
+    request::{Request, ReuseFlag},
+    stream::StreamRole,
+};
 
-use crate::ImageStore;
+use shared_types::server::{ImageManager, ProcessingStatus};
+use std::{thread, time::Duration};
+
+use crate::{ImageStore, NEXT_IMAGE_ID};
 
 use super::LoadImages;
 
-#[derive(Default)]
+const PIXEL_FORMAT_MJPEG: PixelFormat =
+    PixelFormat::new(u32::from_le_bytes([b'M', b'J', b'P', b'G']), 0);
+
 pub struct CameraImage {
     framerate: f32,
 }
 
 impl Default for CameraImage {
     fn default() -> Self {
-        Self {
-            framerate: 15.0,
-        }
+        Self { framerate: 0.5 }
     }
 }
 
 impl LoadImages for CameraImage {
     fn get_image(&mut self, store: &ImageStore) {
-        let info = info().unwrap();
-        if info.cameras.len() == 0 {
-            panic!("No cameras detected");
-        }
-        info!("Found {} cameras", info);
-        
-        let mut camera = SimpleCamera::new(info.clone()).unwrap();
-        camera.activate().unwrap();
-
         let mut count = 0;
+
+        let camera_manager = CameraManager::new().unwrap();
+        let cameras = camera_manager.cameras();
+        let camera = cameras.get(0).expect("No Cameras Found");
+        let mut camera = camera.acquire().unwrap();
+        let mut config = camera
+            .generate_configuration(&[StreamRole::StillCapture])
+            .unwrap();
+        config
+            .get_mut(0)
+            .unwrap()
+            .set_pixel_format(PIXEL_FORMAT_MJPEG);
+
+        assert_eq!(
+            config.get(0).unwrap().get_pixel_format(),
+            PIXEL_FORMAT_MJPEG,
+            "MJPEG is not supported by the camera"
+        );
+        camera.configure(&mut config).unwrap();
+
+        let mut alloc = FrameBufferAllocator::new(&camera);
+
+        // Allocate frame buffers for the stream
+        let cfg = config.get(0).unwrap();
+        let stream = cfg.stream().unwrap();
+        let buffers = alloc.alloc(&stream).unwrap();
+
+        // Convert FrameBuffer to MemoryMappedFrameBuffer, which allows reading &[u8]
+        let buffers = buffers
+            .into_iter()
+            .map(|buf| MemoryMappedFrameBuffer::new(buf).unwrap())
+            .collect::<Vec<_>>();
+
+        // Create capture requests and attach buffers
+        let mut reqs = buffers
+            .into_iter()
+            .map(|buf| {
+                let mut req = camera.create_request(None).unwrap();
+                req.add_buffer(&stream, buf).unwrap();
+                req
+            })
+            .collect::<Vec<_>>();
+
+        // Completed capture requests are returned as a callback
+        let (tx, rx) = std::sync::mpsc::channel();
+        camera.on_request_completed(move |req| {
+            tx.send(req).unwrap();
+        });
+
+        camera.start(None).unwrap();
+
         loop {
             thread::sleep(Duration::from_secs_f32(
                 (1.0 / 60.0) * (60.0 / self.framerate),
             ));
+            camera.queue_request(reqs.pop().unwrap()).unwrap();
 
-            let img = camera.capture().unwrap();
+            println!("Waiting for camera request execution");
+            let mut req = rx
+                .recv_timeout(Duration::from_secs(2))
+                .expect("Camera request failed");
+
+            println!("Camera request {:?} completed!", req);
+            println!("Metadata: {:#?}", req.metadata());
+
+            // Get framebuffer for our stream
+            let framebuffer: &MemoryMappedFrameBuffer<FrameBuffer> = req.buffer(&stream).unwrap();
+            println!("FrameBuffer metadata: {:#?}", framebuffer.metadata());
+
+            // MJPEG format has only one data plane containing encoded jpeg data with all the headers
+            let planes = framebuffer.data();
+            let jpeg_data = planes.get(0).unwrap();
+            let jpeg_len = framebuffer
+                .metadata()
+                .unwrap()
+                .planes()
+                .get(0)
+                .unwrap()
+                .bytes_used as usize;
+            std::fs::write("test.jpg", &jpeg_data[..jpeg_len]).unwrap();
+            let img = image::load_from_memory(&jpeg_data).unwrap();
+            req.reuse(ReuseFlag::REUSE_BUFFERS);
+
             let img_id = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
             let new_img_store_val: ImageManager = ImageManager {
                 raw: img,
