@@ -1,7 +1,10 @@
 use image::GenericImageView;
 use lazy_static::lazy_static;
 use ndarray::{s, Array, Axis, IxDyn};
-use ort::{Environment, Session, SessionBuilder, Value};
+use ort::{
+    execution_providers::{CPUExecutionProviderOptions, CUDAExecutionProviderOptions},
+    Environment, ExecutionProvider, Session, SessionBuilder, Value,
+};
 #[allow(unused_imports)] //based on features
 use shared_types::tracking::{
     yolo::{YoloClasses80, YoloClassesOIV7},
@@ -13,7 +16,16 @@ use super::ObjectDetection;
 
 lazy_static! {
     static ref MODEL: Session = {
-        let env = Arc::new(Environment::builder().with_name("YOLOv8").build().unwrap());
+        let env = Arc::new(
+            Environment::builder()
+                .with_execution_providers(vec![
+                    ExecutionProvider::CUDA(CUDAExecutionProviderOptions::default()),
+                    ExecutionProvider::CPU(CPUExecutionProviderOptions::default()),
+                ])
+                .with_name("YOLOv8")
+                .build()
+                .unwrap(),
+        );
 
         #[cfg(feature = "model-yolov8-s")]
         let session = SessionBuilder::new(&env)
