@@ -27,7 +27,7 @@ futures-channel = { version = "0.3.29" }
 image = { version = "0.24.7" }
 shared-types = { path = "../shared-types" }
 ndarray = { version = "0.15.6" }
-ort = { version = "1.16.2" }
+ort = { version = "2.0.0-rc.0" }
 lazy_static = { version = "1.4.0" }
 
 [build-dependencies]

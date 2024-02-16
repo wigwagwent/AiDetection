@@ -2,55 +2,50 @@ use image::GenericImageView;
 use lazy_static::lazy_static;
 use ndarray::{s, Array, Axis, IxDyn};
 use ort::{
-    execution_providers::{
-        CPUExecutionProviderOptions, CUDAExecutionProviderOptions, TensorRTExecutionProviderOptions,
-    },
-    Environment, ExecutionProvider, Session, SessionBuilder, Value,
+    inputs, CPUExecutionProvider, CUDAExecutionProvider, Session, TensorRTExecutionProvider,
 };
+
 #[allow(unused_imports)] //based on features
 use shared_types::tracking::{
     yolo::{YoloClasses80, YoloClassesOIV7},
     TrackingResult,
 };
-use std::{cmp::Ordering, sync::Arc, vec};
+use std::cmp::Ordering;
 
 use super::ObjectDetection;
 
 lazy_static! {
     static ref MODEL: Session = {
-        let env = Arc::new(
-            Environment::builder()
-                .with_execution_providers(vec![
-                    ExecutionProvider::TensorRT(TensorRTExecutionProviderOptions::default()),
-                    ExecutionProvider::CUDA(CUDAExecutionProviderOptions::default()),
-                    ExecutionProvider::CPU(CPUExecutionProviderOptions::default()),
-                ])
-                .with_name("YOLOv8")
-                .build()
-                .unwrap(),
-        );
+        ort::init()
+            .with_execution_providers([
+                TensorRTExecutionProvider::default().build(),
+                CUDAExecutionProvider::default().build(),
+                CPUExecutionProvider::default().build(),
+            ])
+            .commit()
+            .unwrap();
 
         #[cfg(feature = "model-yolov8-s")]
-        let session = SessionBuilder::new(&env)
+        let model = Session::builder()
             .unwrap()
             .with_model_from_file("models/model-yolov8-s.onnx")
             .unwrap();
         #[cfg(feature = "model-yolov8-n")]
-        let session = SessionBuilder::new(&env)
+        let model = Session::builder()
             .unwrap()
             .with_model_from_file("models/model-yolov8-n.onnx")
             .unwrap();
         #[cfg(feature = "model-yolov8-m")]
-        let session = SessionBuilder::new(&env)
+        let model = Session::builder()
             .unwrap()
             .with_model_from_file("models/model-yolov8-m.onnx")
             .unwrap();
         #[cfg(feature = "model-yolov8-s-oiv7")]
-        let session = SessionBuilder::new(&env)
+        let model = Session::builder()
             .unwrap()
             .with_model_from_file("models/model-yolov8-s-oiv7.onnx")
             .unwrap();
-        session
+        model
     };
 }
 
@@ -96,12 +91,10 @@ impl ObjectDetection for Yolo {
     /// array
     fn detect_objects(&mut self) {
         let input_as_values = &self.prepared_img.as_standard_layout();
-        let model_inputs = vec![Value::from_array(MODEL.allocator(), input_as_values).unwrap()];
-        let outputs = MODEL.run(model_inputs).unwrap();
-        let output = outputs
-            .get(0)
-            .unwrap()
-            .try_extract::<f32>()
+        let model_inputs = ort::Value::from_array(input_as_values).unwrap();
+        let outputs = MODEL.run(inputs![model_inputs].unwrap()).unwrap();
+        let output = outputs["output0"]
+            .extract_tensor::<f32>()
             .unwrap()
             .view()
             .t()
