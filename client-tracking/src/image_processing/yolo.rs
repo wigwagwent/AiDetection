@@ -2,7 +2,9 @@ use image::GenericImageView;
 use lazy_static::lazy_static;
 use ndarray::{s, Array, Axis, IxDyn};
 use ort::{
-    execution_providers::{CPUExecutionProviderOptions, CUDAExecutionProviderOptions},
+    execution_providers::{
+        CPUExecutionProviderOptions, CUDAExecutionProviderOptions, TensorRTExecutionProviderOptions,
+    },
     Environment, ExecutionProvider, Session, SessionBuilder, Value,
 };
 #[allow(unused_imports)] //based on features
@@ -19,6 +21,7 @@ lazy_static! {
         let env = Arc::new(
             Environment::builder()
                 .with_execution_providers(vec![
+                    ExecutionProvider::TensorRT(TensorRTExecutionProviderOptions::default()),
                     ExecutionProvider::CUDA(CUDAExecutionProviderOptions::default()),
                     ExecutionProvider::CPU(CPUExecutionProviderOptions::default()),
                 ])
