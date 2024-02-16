@@ -26,7 +26,7 @@ pub struct CameraImage {
 
 impl Default for CameraImage {
     fn default() -> Self {
-        Self { framerate: 0.5 }
+        Self { framerate: 5.0 }
     }
 }
 
@@ -69,8 +69,9 @@ impl LoadImages for CameraImage {
         // Create capture requests and attach buffers
         let mut reqs = buffers
             .into_iter()
-            .map(|buf| {
-                let mut req = camera.create_request(None).unwrap();
+            .enumerate()
+            .map(|(i, buf)| {
+                let mut req = camera.create_request(Some(i as u64)).unwrap();
                 req.add_buffer(&stream, buf).unwrap();
                 req
             })
@@ -83,26 +84,24 @@ impl LoadImages for CameraImage {
         });
 
         camera.start(None).unwrap();
+        camera.queue_request(reqs.pop().unwrap()).unwrap();
 
         loop {
             thread::sleep(Duration::from_secs_f32(
                 (1.0 / 60.0) * (60.0 / self.framerate),
             ));
-            camera.queue_request(reqs.pop().unwrap()).unwrap();
 
-            println!("Waiting for camera request execution");
+            //println!("Waiting for camera request execution");
             let mut req = rx
                 .recv_timeout(Duration::from_secs(2))
                 .expect("Camera request failed");
 
-            println!("Camera request {:?} completed!", req);
-            println!("Metadata: {:#?}", req.metadata());
+            //println!("Camera request {:?} completed!", req);
+            //println!("Metadata: {:#?}", req.metadata());
 
             // Get framebuffer for our stream
             let framebuffer: &MemoryMappedFrameBuffer<FrameBuffer> = req.buffer(&stream).unwrap();
-            println!("FrameBuffer metadata: {:#?}", framebuffer.metadata());
 
-            // MJPEG format has only one data plane containing encoded jpeg data with all the headers
             let planes = framebuffer.data();
             let jpeg_data = planes.get(0).unwrap();
             let jpeg_len = framebuffer
@@ -112,9 +111,9 @@ impl LoadImages for CameraImage {
                 .get(0)
                 .unwrap()
                 .bytes_used as usize;
-            std::fs::write("test.jpg", &jpeg_data[..jpeg_len]).unwrap();
             let img = image::load_from_memory(&jpeg_data).unwrap();
             req.reuse(ReuseFlag::REUSE_BUFFERS);
+            camera.queue_request(req).unwrap();
 
             let img_id = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
             let new_img_store_val: ImageManager = ImageManager {
