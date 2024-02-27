@@ -29,6 +29,7 @@ pub fn image_html(image_store: ImageStore) -> String {
         .tracked
         .clone()
         .expect("Tracking results said it was done");
+    let time = image.detection_time.unwrap().as_secs_f32();
     let mut image = image.raw.clone();
     let mut items_in_img: String = String::new();
 
@@ -55,8 +56,17 @@ pub fn image_html(image_store: ImageStore) -> String {
     format!(
         r#"
             <html>
+                <head>
+                    <style>
+                        body {{
+                            background-color: black;
+                            color: white;
+                        }}
+                </style>
+            </head>
                 <body>
                     <img id="exampleImage" src="data:image/png;base64,{}" alt="Example Image">
+                    <p>Processing Time: {} s</p>
                     <p>{}</p>
                     <script>
                         setTimeout(function () {{ location.reload(true); }}, 500);
@@ -64,6 +74,6 @@ pub fn image_html(image_store: ImageStore) -> String {
                 </body>
             </html>
         "#,
-        res_base64, items_in_img
+        res_base64, time, items_in_img
     )
 }

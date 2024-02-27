@@ -1,35 +1,35 @@
-use image::DynamicImage;
+#[cfg(feature = "load-camera")]
+use super::LoadImages;
+#[cfg(feature = "load-camera")]
+use crate::{ImageStore, NEXT_IMAGE_ID};
+#[cfg(feature = "load-camera")]
 use libcamera::{
-    camera::{ActiveCamera, CameraConfiguration},
     camera_manager::CameraManager,
-    framebuffer::AsFrameBuffer,
     framebuffer_allocator::{FrameBuffer, FrameBufferAllocator},
     framebuffer_map::MemoryMappedFrameBuffer,
     pixel_format::PixelFormat,
-    request::{Request, ReuseFlag},
+    request::ReuseFlag,
     stream::StreamRole,
 };
-
+#[cfg(feature = "load-camera")]
 use shared_types::server::{ImageManager, ProcessingStatus};
+#[cfg(feature = "load-camera")]
 use std::{thread, time::Duration};
 
-use crate::{ImageStore, NEXT_IMAGE_ID};
-
-use super::LoadImages;
-
+#[cfg(feature = "load-camera")]
 const PIXEL_FORMAT_MJPEG: PixelFormat =
     PixelFormat::new(u32::from_le_bytes([b'M', b'J', b'P', b'G']), 0);
-
+#[cfg(feature = "load-camera")]
 pub struct CameraImage {
     framerate: f32,
 }
-
+#[cfg(feature = "load-camera")]
 impl Default for CameraImage {
     fn default() -> Self {
         Self { framerate: 5.0 }
     }
 }
-
+#[cfg(feature = "load-camera")]
 impl LoadImages for CameraImage {
     fn get_image(&mut self, store: &ImageStore) {
         let mut count = 0;
@@ -104,13 +104,7 @@ impl LoadImages for CameraImage {
 
             let planes = framebuffer.data();
             let jpeg_data = planes.get(0).unwrap();
-            let jpeg_len = framebuffer
-                .metadata()
-                .unwrap()
-                .planes()
-                .get(0)
-                .unwrap()
-                .bytes_used as usize;
+
             let img = image::load_from_memory(&jpeg_data).unwrap();
             req.reuse(ReuseFlag::REUSE_BUFFERS);
             camera.queue_request(req).unwrap();
@@ -120,9 +114,12 @@ impl LoadImages for CameraImage {
                 raw: img,
                 dehazed: None,
                 dehazed_status: ProcessingStatus::NotStarted,
+                dehazed_time: None,
                 tracked: None,
-                tracking_status: ProcessingStatus::NotStarted,
+                tracked_status: ProcessingStatus::NotStarted,
+                tracked_time: None,
                 detection_status: ProcessingStatus::NotStarted,
+                detection_time: None,
             };
             let mut mut_store = store.lock().unwrap();
             mut_store.insert(img_id, new_img_store_val);

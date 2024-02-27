@@ -2,8 +2,10 @@ use std::{thread, time::Duration};
 
 use crate::ImageStore;
 
-#[allow(unused_imports)]
-use self::{load_camera_image::CameraImage, load_local_image::LocalImage};
+#[cfg(feature = "load-camera")]
+use self::load_camera_image::CameraImage;
+#[cfg(feature = "load-file")]
+use self::load_local_image::LocalImage;
 mod load_camera_image;
 mod load_local_image;
 

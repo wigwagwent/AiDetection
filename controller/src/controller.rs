@@ -19,20 +19,6 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
             }
 
             match &client.client_type {
-                Some(ProcessingType::Dehaze) => todo!(),
-                _ => continue,
-            }
-        }
-
-        for client in clients.iter() {
-            if client
-                .client_busy
-                .load(std::sync::atomic::Ordering::Relaxed)
-            {
-                continue;
-            }
-
-            match &client.client_type {
                 Some(ProcessingType::ObjectDetection) => {
                     let last_img = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed) - 1;
                     let new_img_store = &img_store.lock().unwrap();
@@ -56,19 +42,7 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
                         .client_busy
                         .store(true, std::sync::atomic::Ordering::Relaxed);
                 }
-                _ => continue,
-            }
-        }
-
-        for client in clients.iter() {
-            if client
-                .client_busy
-                .load(std::sync::atomic::Ordering::Relaxed)
-            {
-                continue;
-            }
-
-            match &client.client_type {
+                Some(ProcessingType::Dehaze) => todo!(),
                 Some(ProcessingType::Tracking) => todo!(),
                 _ => continue,
             }

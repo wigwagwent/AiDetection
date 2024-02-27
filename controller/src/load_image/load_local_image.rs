@@ -47,9 +47,12 @@ impl LoadImages for LocalImage {
                 raw: img,
                 dehazed: None,
                 dehazed_status: ProcessingStatus::NotStarted,
+                dehazed_time: None,
                 tracked: None,
-                tracking_status: ProcessingStatus::NotStarted,
+                tracked_status: ProcessingStatus::NotStarted,
+                tracked_time: None,
                 detection_status: ProcessingStatus::NotStarted,
+                detection_time: None,
             };
             let mut mut_store = store.lock().unwrap();
             mut_store.insert(img_id, new_img_store_val);

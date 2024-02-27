@@ -1,4 +1,4 @@
-use std::sync::atomic::AtomicBool;
+use std::{sync::atomic::AtomicBool, time::Duration};
 
 use image::DynamicImage;
 use serde::{Deserialize, Serialize};
@@ -37,7 +37,11 @@ pub struct ImageManager {
     pub raw: DynamicImage,
     pub dehazed: Option<DynamicImage>,
     pub dehazed_status: ProcessingStatus,
+    pub dehazed_time: Option<Duration>,
     pub tracked: Option<Vec<TrackingResult>>,
-    pub tracking_status: ProcessingStatus,
+    pub tracked_status: ProcessingStatus,
+    pub tracked_time: Option<Duration>,
     pub detection_status: ProcessingStatus,
+    //pub detection: Option<Vec<TrackingResult>>, Use tracked
+    pub detection_time: Option<Duration>,
 }
