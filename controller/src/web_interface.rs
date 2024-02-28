@@ -3,20 +3,20 @@ use std::io::Cursor;
 use base64::engine::general_purpose::STANDARD as BASE64;
 use base64::engine::Engine as _;
 use image::{ImageOutputFormat, Rgba};
-use imageproc::drawing::draw_hollow_rect_mut;
+use imageproc::drawing::{draw_hollow_rect_mut, draw_text_mut};
 use imageproc::rect::Rect;
+use rusttype::{Font, Scale};
 use shared_types::server::ProcessingStatus;
 
 use crate::ImageStore;
 
 pub fn image_html(image_store: ImageStore) -> String {
-    let images = image_store.lock().unwrap();
     let mut latest_processed: Option<usize> = None;
-    for (id, image) in images.iter() {
+    for image in image_store.iter() {
         if image.detection_status == ProcessingStatus::Finished
-            && (latest_processed.is_none() || id > &latest_processed.unwrap())
+            && (latest_processed.is_none() || image.key() > &latest_processed.unwrap())
         {
-            latest_processed = Some(*id);
+            latest_processed = Some(image.key().clone());
         }
     }
 
@@ -24,19 +24,20 @@ pub fn image_html(image_store: ImageStore) -> String {
         return r#"No processed pictures found"#.into();
     }
 
-    let image = images.get(&latest_processed.unwrap()).unwrap();
+    let image = image_store.get(&latest_processed.unwrap()).unwrap();
     let outlines = image
         .tracked
         .clone()
         .expect("Tracking results said it was done");
-    let time = image.detection_time.unwrap().as_secs_f32();
+    let time = image.detection_time.unwrap();
     let mut image = image.raw.clone();
     let mut items_in_img: String = String::new();
 
     for rectangle in outlines {
         items_in_img += format!(
-            "Item: {:#?}, Probability: {:.2}<br>",
-            rectangle.label, rectangle.probability
+            "Item: {}, Probability: {:.2}<br>",
+            rectangle.label.as_string(),
+            rectangle.probability
         )
         .as_str();
         draw_hollow_rect_mut(
@@ -44,6 +45,18 @@ pub fn image_html(image_store: ImageStore) -> String {
             Rect::at(rectangle.x_bottom_corner, rectangle.y_bottom_corner)
                 .of_size(rectangle.x_length, rectangle.y_height),
             Rgba([255, 0, 0, 0]),
+        );
+
+        let font_data: &[u8] = include_bytes!("MartianMono-NrRg.ttf");
+        let font = Font::try_from_bytes(font_data).expect("Error constructing Font");
+        draw_text_mut(
+            &mut image,
+            Rgba([255, 0, 0, 0]),
+            rectangle.x_bottom_corner + 2,
+            rectangle.y_bottom_corner + 2,
+            Scale::uniform(20.0),
+            &font,
+            &rectangle.label.as_string(),
         );
     }
 
@@ -66,7 +79,7 @@ pub fn image_html(image_store: ImageStore) -> String {
             </head>
                 <body>
                     <img id="exampleImage" src="data:image/png;base64,{}" alt="Example Image">
-                    <p>Processing Time: {} s</p>
+                    <p>Processing Time: {:?}</p>
                     <p>{}</p>
                     <script>
                         setTimeout(function () {{ location.reload(true); }}, 500);

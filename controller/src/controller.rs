@@ -21,8 +21,7 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
             match &client.client_type {
                 Some(ProcessingType::ObjectDetection) => {
                     let last_img = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed) - 1;
-                    let new_img_store = &img_store.lock().unwrap();
-                    let img = &new_img_store.get(&last_img).unwrap().raw;
+                    let img = &img_store.get(&last_img).unwrap().raw;
                     let raw_img = ImageProperties::new_scaled(img.clone(), last_img, 640, 640);
                     let raw_data = bincode::serialize(&raw_img).unwrap();
 
@@ -48,16 +47,12 @@ pub fn controller_thread(clients: Clients, img_store: ImageStore) {
             }
         }
 
-        let store = img_store.try_lock();
-        if store.is_ok() {
-            let mut store = store.unwrap();
-            if store.len() > 250 {
-                let next_count = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
-                println!("Dropping images, only keeping the last 200");
-                store.retain(|k, _| k > &(next_count - 200));
-            }
+        if img_store.len() > 250 {
+            let next_count = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
+            println!("Dropping images, only keeping the last 200");
+            img_store.retain(|k, _| k > &(next_count - 200));
         }
 
-        thread::sleep(Duration::from_secs_f32(0.01)); //check 100 times per second
+        thread::sleep(Duration::from_secs_f32(1.0)); //check every second
     }
 }

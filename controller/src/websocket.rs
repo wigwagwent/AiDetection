@@ -1,7 +1,7 @@
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
 use shared_types::{
     client::{ReturnData, ReturnDataType},
-    server::{ClientData, ImageManager, ProcessingStatus},
+    server::{ClientData, ProcessingStatus},
 };
 use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::mpsc;
@@ -70,12 +70,11 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
                     .client_busy
                     .store(false, std::sync::atomic::Ordering::Relaxed);
 
-                let mut store = image_store.lock().unwrap();
-                let mut_store = store.get_mut(&data.img_id).unwrap();
+                let mut mut_store = image_store.get_mut(&data.img_id).unwrap();
 
                 mut_store.detection_status = ProcessingStatus::Finished;
                 mut_store.tracked = Some(objects);
-                post_detection(&mut store, &data.img_id)
+                mut_store.detection_time = Some(data.time_cost);
             }
 
             ReturnDataType::ClientType(client_type) => {
@@ -89,11 +88,4 @@ async fn user_message(my_id: usize, msg: Message, clients: &Clients, image_store
 
 async fn user_disconnected(my_id: usize, users: &Clients) {
     users.remove(&my_id);
-}
-
-fn post_detection(
-    image_store: &mut std::sync::MutexGuard<'_, std::collections::HashMap<usize, ImageManager>>,
-    current_img: &usize,
-) {
-    image_store.retain(|k, _| k >= current_img);
 }

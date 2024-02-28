@@ -26,4 +26,5 @@ futures-util = { version = "0.3.29" }
 image = { version = "0.24.7" }
 imageproc = { version = "0.23.0" }
 shared-types = { path = "../shared-types" }
+rusttype = { version = "0.9.2" }
 libcamera = { version = "0.2.3", optional = true }

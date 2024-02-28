@@ -19,3 +19,12 @@ pub enum ItemLabel {
     YoloClasses80(YoloClasses80),
     YoloClassesOIV7(YoloClassesOIV7),
 }
+
+impl ItemLabel {
+    pub fn as_string(&self) -> String {
+        match self {
+            ItemLabel::YoloClasses80(x) => x.to_string(),
+            ItemLabel::YoloClassesOIV7(x) => x.to_string(),
+        }
+    }
+}

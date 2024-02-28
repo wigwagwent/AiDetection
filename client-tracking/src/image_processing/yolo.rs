@@ -123,20 +123,24 @@ impl ObjectDetection for Yolo {
             }
 
             #[cfg(feature = "model-yolov8-s")]
-            let label =
-                shared_types::tracking::ItemLabel::YoloClasses80(YoloClasses80::from(class_id));
+            let label = shared_types::tracking::ItemLabel::YoloClasses80(
+                YoloClasses80::from_repr(class_id).unwrap(),
+            );
 
             #[cfg(feature = "model-yolov8-n")]
-            let label =
-                shared_types::tracking::ItemLabel::YoloClasses80(YoloClasses80::from(class_id));
+            let label = shared_types::tracking::ItemLabel::YoloClasses80(
+                YoloClasses80::from_repr(class_id).unwrap(),
+            );
 
             #[cfg(feature = "model-yolov8-m")]
-            let label =
-                shared_types::tracking::ItemLabel::YoloClasses80(YoloClasses80::from(class_id));
+            let label = shared_types::tracking::ItemLabel::YoloClasses80(
+                YoloClasses80::from_repr(class_id).unwrap(),
+            );
 
             #[cfg(feature = "model-yolov8-s-oiv7")]
-            let label =
-                shared_types::tracking::ItemLabel::YoloClassesOIV7(YoloClassesOIV7::from(class_id));
+            let label = shared_types::tracking::ItemLabel::YoloClassesOIV7(
+                YoloClassesOIV7::from_repr(class_id).unwrap(),
+            );
 
             let xc = row[0] / 640.0 * (self.origin_img_width as f32);
             let yc = row[1] / 640.0 * (self.origin_img_height as f32);
