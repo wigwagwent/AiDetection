@@ -109,7 +109,7 @@ impl LoadImages for CameraImage {
             req.reuse(ReuseFlag::REUSE_BUFFERS);
             camera.queue_request(req).unwrap();
 
-            let img_id = NEXT_IMAGE_ID.load(std::sync::atomic::Ordering::Relaxed);
+            let img_id = NEXT_IMAGE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let new_img_store_val: ImageManager = ImageManager {
                 raw: img,
                 dehazed: None,
@@ -121,8 +121,7 @@ impl LoadImages for CameraImage {
                 detection_status: ProcessingStatus::NotStarted,
                 detection_time: None,
             };
-            let mut mut_store = store.lock().unwrap();
-            mut_store.insert(img_id, new_img_store_val);
+            store.insert(img_id, new_img_store_val);
             NEXT_IMAGE_ID.store(img_id + 1, std::sync::atomic::Ordering::Relaxed);
             count += 1;
             if count % 100 == 0 {
