@@ -25,25 +25,25 @@ lazy_static! {
             .commit()
             .unwrap();
 
-        #[cfg(feature = "model-yolov8-s")]
+        #[cfg(feature = "model-yolov8s")]
         let model = Session::builder()
             .unwrap()
-            .with_model_from_file("models/model-yolov8-s.onnx")
+            .with_model_from_file("models/yolov8s.onnx")
             .unwrap();
-        #[cfg(feature = "model-yolov8-n")]
+        #[cfg(feature = "model-yolov8n")]
         let model = Session::builder()
             .unwrap()
-            .with_model_from_file("models/model-yolov8-n.onnx")
+            .with_model_from_file("models/yolov8n.onnx")
             .unwrap();
-        #[cfg(feature = "model-yolov8-m")]
+        #[cfg(feature = "model-yolov8m")]
         let model = Session::builder()
             .unwrap()
-            .with_model_from_file("models/model-yolov8-m.onnx")
+            .with_model_from_file("models/yolov8m.onnx")
             .unwrap();
-        #[cfg(feature = "model-yolov8-s-oiv7")]
+        #[cfg(feature = "model-yolov8s-oiv7")]
         let model = Session::builder()
             .unwrap()
-            .with_model_from_file("models/model-yolov8-s-oiv7.onnx")
+            .with_model_from_file("models/yolov8s-oiv7.onnx")
             .unwrap();
         model
     };
@@ -122,22 +122,22 @@ impl ObjectDetection for Yolo {
                 continue;
             }
 
-            #[cfg(feature = "model-yolov8-s")]
+            #[cfg(feature = "model-yolov8s")]
             let label = shared_types::tracking::ItemLabel::YoloClasses80(
                 YoloClasses80::from_repr(class_id).unwrap(),
             );
 
-            #[cfg(feature = "model-yolov8-n")]
+            #[cfg(feature = "model-yolov8n")]
             let label = shared_types::tracking::ItemLabel::YoloClasses80(
                 YoloClasses80::from_repr(class_id).unwrap(),
             );
 
-            #[cfg(feature = "model-yolov8-m")]
+            #[cfg(feature = "model-yolov8m")]
             let label = shared_types::tracking::ItemLabel::YoloClasses80(
                 YoloClasses80::from_repr(class_id).unwrap(),
             );
 
-            #[cfg(feature = "model-yolov8-s-oiv7")]
+            #[cfg(feature = "model-yolov8s-oiv7")]
             let label = shared_types::tracking::ItemLabel::YoloClassesOIV7(
                 YoloClassesOIV7::from_repr(class_id).unwrap(),
             );

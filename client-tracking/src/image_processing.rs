@@ -47,10 +47,10 @@ pub fn receive_img(raw_img: Vec<u8>, tx: UnboundedSender<Message>) {
 
 fn new_object_detection(origin_img_width: u32, origin_img_height: u32) -> impl ObjectDetection {
     #[cfg(any(
-        feature = "model-yolov8-s",
-        feature = "model-yolov8-n",
-        feature = "model-yolov8-m",
-        feature = "model-yolov8-s-oiv7"
+        feature = "model-yolov8s",
+        feature = "model-yolov8n",
+        feature = "model-yolov8m",
+        feature = "model-yolov8s-oiv7"
     ))]
     Yolo::new(origin_img_width, origin_img_height)
 }
