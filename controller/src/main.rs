@@ -5,8 +5,9 @@ mod websocket;
 
 use dashmap::DashMap;
 use shared_types::server::{ClientData, ImageManager};
+use std::net::IpAddr;
 use std::sync::atomic::AtomicUsize;
-use std::{sync::Arc, thread};
+use std::{env, sync::Arc, thread};
 use warp::Filter;
 
 use crate::controller::controller_thread;
@@ -21,6 +22,37 @@ type ImageStore = Arc<DashMap<usize, ImageManager>>;
 
 #[tokio::main]
 async fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 2 {
+        eprintln!("Usage: {} <ip:port>", args[0]);
+        return;
+    }
+
+    let ip_port_str = &args[1];
+    let parts: Vec<&str> = ip_port_str.split(':').collect();
+
+    if parts.len() != 2 {
+        eprintln!("Invalid format for <ip:port>");
+        return;
+    }
+
+    let ip: IpAddr = match parts[0].parse() {
+        Ok(ip) => ip,
+        Err(_) => {
+            eprintln!("Invalid IP address provided");
+            return;
+        }
+    };
+
+    let port: u16 = match parts[1].parse() {
+        Ok(port) => port,
+        Err(_) => {
+            eprintln!("Invalid port provided");
+            return;
+        }
+    };
+
     let clients = Clients::default();
     let image_store = ImageStore::default();
 
@@ -54,16 +86,8 @@ async fn main() {
 
     let routes = ws_connection.or(web_image_connection);
 
-    let ip: [u8; 4] = [127, 0, 0, 1];
-    let port: u16 = 3030;
-    // Start the Warp server
-    println!(
-        "Now listening on {}.{}.{}.{}:{}",
-        ip[0], ip[1], ip[2], ip[3], port
-    );
-    println!(
-        "http://{}.{}.{}.{}:{}/image",
-        ip[0], ip[1], ip[2], ip[3], port
-    );
+    println!("Now listening on {}:{}", ip, port);
+    println!("http://{}:{}/image", ip, port);
+
     warp::serve(routes).run((ip, port)).await;
 }

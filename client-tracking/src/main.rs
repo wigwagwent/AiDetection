@@ -1,4 +1,4 @@
-use std::{thread, time::Duration};
+use std::{env, thread, time::Duration};
 
 use futures_util::{future, pin_mut, StreamExt};
 mod image_processing;
@@ -11,7 +11,16 @@ use tokio_tungstenite::{connect_async, tungstenite::Message};
 
 #[tokio::main]
 async fn main() {
-    let url = url::Url::parse("ws://127.0.0.1:3030/websocket").unwrap();
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 2 {
+        eprintln!("Usage: {} <ip:port>", args[0]);
+        return;
+    }
+
+    let ip_with_port = &args[1];
+    let url_str = format!("ws://{}/websocket", ip_with_port);
+    let url = url::Url::parse(&url_str).unwrap();
 
     let (tx, rx) = futures_channel::mpsc::unbounded();
     let tx2 = tx.clone();

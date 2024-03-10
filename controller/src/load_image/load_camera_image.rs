@@ -3,6 +3,11 @@ use super::LoadImages;
 #[cfg(feature = "load-camera")]
 use crate::{ImageStore, NEXT_IMAGE_ID};
 #[cfg(feature = "load-camera")]
+use image::DynamicImage;
+use image::ImageBuffer;
+use image::ImageFormat;
+use libcamera::geometry::Size;
+#[cfg(feature = "load-camera")]
 use libcamera::{
     camera_manager::CameraManager,
     framebuffer_allocator::{FrameBuffer, FrameBufferAllocator},
@@ -17,16 +22,23 @@ use shared_types::server::{ImageManager, ProcessingStatus};
 use std::{thread, time::Duration};
 
 #[cfg(feature = "load-camera")]
-const PIXEL_FORMAT_MJPEG: PixelFormat =
-    PixelFormat::new(u32::from_le_bytes([b'M', b'J', b'P', b'G']), 0);
+const PIXEL_FORMAT_YUYV: PixelFormat =
+    PixelFormat::new(u32::from_le_bytes([b'Y', b'U', b'Y', b'V']), 0);
 #[cfg(feature = "load-camera")]
 pub struct CameraImage {
     framerate: f32,
+    size: Size,
 }
 #[cfg(feature = "load-camera")]
 impl Default for CameraImage {
     fn default() -> Self {
-        Self { framerate: 5.0 }
+        Self {
+            framerate: 5.0,
+            size: Size {
+                width: 1920,
+                height: 1080,
+            },
+        }
     }
 }
 #[cfg(feature = "load-camera")]
@@ -44,13 +56,16 @@ impl LoadImages for CameraImage {
         config
             .get_mut(0)
             .unwrap()
-            .set_pixel_format(PIXEL_FORMAT_MJPEG);
+            .set_pixel_format(PIXEL_FORMAT_YUYV);
+
+        config.get_mut(0).unwrap().set_size(self.size);
 
         assert_eq!(
             config.get(0).unwrap().get_pixel_format(),
-            PIXEL_FORMAT_MJPEG,
+            PIXEL_FORMAT_YUYV,
             "MJPEG is not supported by the camera"
         );
+        //println!("Available formats: {:#?}", config.get(0).unwrap().formats());
         camera.configure(&mut config).unwrap();
 
         let mut alloc = FrameBufferAllocator::new(&camera);
@@ -103,9 +118,16 @@ impl LoadImages for CameraImage {
             let framebuffer: &MemoryMappedFrameBuffer<FrameBuffer> = req.buffer(&stream).unwrap();
 
             let planes = framebuffer.data();
-            let jpeg_data = planes.get(0).unwrap();
+            let image_data = planes.get(0).unwrap();
+            let rgb_data = yuyv_to_rgb(&image_data, self.size);
+            //println!("Data: {:#?}", jpeg_data);
+            //println!("Planes: {:?}", planes.len());
 
-            let img = image::load_from_memory(&jpeg_data).unwrap();
+            let img = DynamicImage::ImageRgb8(
+                ImageBuffer::from_raw(self.size.width, self.size.height, rgb_data).unwrap(),
+            );
+            //let img = image::load_from_memory(&image_data).unwrap();
+            //img.save_with_format("output.jpg", ImageFormat::Jpeg).unwrap();
             req.reuse(ReuseFlag::REUSE_BUFFERS);
             camera.queue_request(req).unwrap();
 
@@ -129,4 +151,37 @@ impl LoadImages for CameraImage {
             }
         }
     }
+}
+
+fn yuyv_to_rgb(yuyv_data: &[u8], size: Size) -> Vec<u8> {
+    let mut rgb_data = Vec::with_capacity((size.width * size.height * 3) as usize);
+
+    for i in (0..(size.width * size.height * 2)).step_by(4) {
+        let y0 = yuyv_data[i as usize] as f32;
+        let u = yuyv_data[(i + 1) as usize] as f32 - 128.0;
+        let y1 = yuyv_data[(i + 2) as usize] as f32;
+        let v = yuyv_data[(i + 3) as usize] as f32 - 128.0;
+
+        let c = y0 - 16.0;
+        let d = u;
+        let e = v;
+        let r = (298.0 * c + 409.0 * e + 128.0) / 256.0;
+        let g = (298.0 * c - 100.0 * d - 208.0 * e + 128.0) / 256.0;
+        let b = (298.0 * c + 516.0 * d + 128.0) / 256.0;
+
+        rgb_data.push(r.max(0.0).min(255.0) as u8);
+        rgb_data.push(g.max(0.0).min(255.0) as u8);
+        rgb_data.push(b.max(0.0).min(255.0) as u8);
+
+        let c = y1 - 16.0;
+        let r = (298.0 * c + 409.0 * e + 128.0) / 256.0;
+        let g = (298.0 * c - 100.0 * d - 208.0 * e + 128.0) / 256.0;
+        let b = (298.0 * c + 516.0 * d + 128.0) / 256.0;
+
+        rgb_data.push(r.max(0.0).min(255.0) as u8);
+        rgb_data.push(g.max(0.0).min(255.0) as u8);
+        rgb_data.push(b.max(0.0).min(255.0) as u8);
+    }
+
+    rgb_data
 }
