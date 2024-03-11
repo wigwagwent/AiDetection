@@ -24,7 +24,7 @@ pub struct ClientData {
     pub client_type: Option<ProcessingType>,
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ProcessingStatus {
     NotStarted,
     Started,
@@ -44,4 +44,29 @@ pub struct ImageManager {
     pub detection_status: ProcessingStatus,
     //pub detection: Option<Vec<TrackingResult>>, Use tracked
     pub detection_time: Option<Duration>,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ImageInformation {
+    pub dehazed_status: ProcessingStatus,
+    pub dehazed_time: Option<Duration>,
+    pub tracked: Option<Vec<TrackingResult>>,
+    pub tracked_status: ProcessingStatus,
+    pub tracked_time: Option<Duration>,
+    pub detection_status: ProcessingStatus,
+    pub detection_time: Option<Duration>,
+}
+
+impl ImageInformation {
+    pub fn new(img: &ImageManager) -> Self {
+        Self {
+            dehazed_status: img.dehazed_status.clone(),
+            dehazed_time: img.dehazed_time,
+            tracked: img.tracked.clone(),
+            tracked_status: img.tracked_status.clone(),
+            tracked_time: img.tracked_time,
+            detection_status: img.detection_status.clone(),
+            detection_time: img.detection_time,
+        }
+    }
 }

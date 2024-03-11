@@ -1,4 +1,6 @@
+mod api_v1;
 mod controller;
+pub mod controller_helper;
 mod load_image;
 mod web_interface;
 mod websocket;
@@ -22,39 +24,42 @@ type ImageStore = Arc<DashMap<usize, ImageManager>>;
 
 #[tokio::main]
 async fn main() {
-    let args: Vec<String> = env::args().collect();
+    let (ip, port) = {
+        let args: Vec<String> = env::args().collect();
 
-    if args.len() != 2 {
-        eprintln!("Usage: {} <ip:port>", args[0]);
-        return;
-    }
-
-    let ip_port_str = &args[1];
-    let parts: Vec<&str> = ip_port_str.split(':').collect();
-
-    if parts.len() != 2 {
-        eprintln!("Invalid format for <ip:port>");
-        return;
-    }
-
-    let ip: IpAddr = match parts[0].parse() {
-        Ok(ip) => ip,
-        Err(_) => {
-            eprintln!("Invalid IP address provided");
+        if args.len() != 2 {
+            eprintln!("Usage: {} <ip:port>", args[0]);
             return;
         }
-    };
 
-    let port: u16 = match parts[1].parse() {
-        Ok(port) => port,
-        Err(_) => {
-            eprintln!("Invalid port provided");
+        let ip_port_str = &args[1];
+        let parts: Vec<&str> = ip_port_str.split(':').collect();
+
+        if parts.len() != 2 {
+            eprintln!("Invalid format for <ip:port>");
             return;
         }
+
+        let ip: IpAddr = match parts[0].parse() {
+            Ok(ip) => ip,
+            Err(_) => {
+                eprintln!("Invalid IP address provided");
+                return;
+            }
+        };
+
+        let port: u16 = match parts[1].parse() {
+            Ok(port) => port,
+            Err(_) => {
+                eprintln!("Invalid port provided");
+                return;
+            }
+        };
+        (ip, port)
     };
 
     let clients = Clients::default();
-    let image_store = ImageStore::default();
+    let image_store: Arc<DashMap<usize, ImageManager>> = ImageStore::default();
 
     thread::spawn({
         let store = image_store.clone();
@@ -69,6 +74,7 @@ async fn main() {
 
     let clients = warp::any().map(move || clients.clone());
     let img_store = image_store.clone();
+    let image_store3 = img_store.clone();
     let image_store1 = warp::any().map(move || image_store.clone());
     let image_store2 = warp::any().map(move || img_store.clone());
 
@@ -84,7 +90,9 @@ async fn main() {
         .and(image_store2)
         .map(move |img_store| warp::reply::html(image_html(img_store)));
 
-    let routes = ws_connection.or(web_image_connection);
+    let routes = ws_connection.or(web_image_connection).or(warp::path("api")
+        .and(warp::path("v1"))
+        .and(api_v1::api_interface(image_store3)));
 
     println!("Now listening on {}:{}", ip, port);
     println!("http://{}:{}/image", ip, port);

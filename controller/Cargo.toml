@@ -5,7 +5,7 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["load-camera"]
+default = ["load-file"]
 
 
 # Currently Supported ways to get images

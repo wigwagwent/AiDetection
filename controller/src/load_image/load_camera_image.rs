@@ -3,15 +3,13 @@ use super::LoadImages;
 #[cfg(feature = "load-camera")]
 use crate::{ImageStore, NEXT_IMAGE_ID};
 #[cfg(feature = "load-camera")]
-use image::DynamicImage;
-use image::ImageBuffer;
-use image::ImageFormat;
-use libcamera::geometry::Size;
+use image::{DynamicImage, ImageBuffer, ImageFormat};
 #[cfg(feature = "load-camera")]
 use libcamera::{
     camera_manager::CameraManager,
     framebuffer_allocator::{FrameBuffer, FrameBufferAllocator},
     framebuffer_map::MemoryMappedFrameBuffer,
+    geometry::Size,
     pixel_format::PixelFormat,
     request::ReuseFlag,
     stream::StreamRole,
@@ -24,6 +22,7 @@ use std::{thread, time::Duration};
 #[cfg(feature = "load-camera")]
 const PIXEL_FORMAT_YUYV: PixelFormat =
     PixelFormat::new(u32::from_le_bytes([b'Y', b'U', b'Y', b'V']), 0);
+
 #[cfg(feature = "load-camera")]
 pub struct CameraImage {
     framerate: f32,
@@ -153,6 +152,7 @@ impl LoadImages for CameraImage {
     }
 }
 
+#[cfg(feature = "load-camera")]
 fn yuyv_to_rgb(yuyv_data: &[u8], size: Size) -> Vec<u8> {
     let mut rgb_data = Vec::with_capacity((size.width * size.height * 3) as usize);
 

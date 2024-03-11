@@ -2,12 +2,10 @@ use std::io::Cursor;
 
 use base64::engine::general_purpose::STANDARD as BASE64;
 use base64::engine::Engine as _;
-use image::{ImageOutputFormat, Rgba};
-use imageproc::drawing::{draw_hollow_rect_mut, draw_text_mut};
-use imageproc::rect::Rect;
-use rusttype::{Font, Scale};
-use shared_types::server::ProcessingStatus;
+use image::ImageOutputFormat;
+use shared_types::server::{ImageInformation, ProcessingStatus};
 
+use crate::controller_helper::markup_image::add_tracking_data_to_image;
 use crate::ImageStore;
 
 pub fn image_html(image_store: ImageStore) -> String {
@@ -30,35 +28,9 @@ pub fn image_html(image_store: ImageStore) -> String {
         .clone()
         .expect("Tracking results said it was done");
     let time = image.detection_time.unwrap();
-    let mut image = image.raw.clone();
-    let mut items_in_img: String = String::new();
-
-    for rectangle in outlines {
-        items_in_img += format!(
-            "Item: {}, Probability: {:.2}<br>",
-            rectangle.label.as_string(),
-            rectangle.probability
-        )
-        .as_str();
-        draw_hollow_rect_mut(
-            &mut image,
-            Rect::at(rectangle.x_bottom_corner, rectangle.y_bottom_corner)
-                .of_size(rectangle.x_length, rectangle.y_height),
-            Rgba([255, 0, 0, 0]),
-        );
-
-        let font_data: &[u8] = include_bytes!("MartianMono-NrRg.ttf");
-        let font = Font::try_from_bytes(font_data).expect("Error constructing Font");
-        draw_text_mut(
-            &mut image,
-            Rgba([255, 0, 0, 0]),
-            rectangle.x_bottom_corner + 2,
-            rectangle.y_bottom_corner + 2,
-            Scale::uniform(20.0),
-            &font,
-            &rectangle.label.as_string(),
-        );
-    }
+    let image_information = ImageInformation::new(&image);
+    let image = add_tracking_data_to_image(&image.raw, outlines);
+    let items_in_img = serde_json::to_string_pretty(&image_information).unwrap();
 
     let mut image_data: Vec<u8> = Vec::new();
     image

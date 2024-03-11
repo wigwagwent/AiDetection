@@ -1,3 +1,4 @@
 target
 controller/local-images/
 client-tracking/models/
+.vscode
