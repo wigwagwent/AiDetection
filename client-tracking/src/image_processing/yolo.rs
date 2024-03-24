@@ -1,9 +1,7 @@
 use image::GenericImageView;
 use lazy_static::lazy_static;
 use ndarray::{s, Array, Axis, IxDyn};
-use ort::{
-    inputs, CPUExecutionProvider, CUDAExecutionProvider, Session, TensorRTExecutionProvider,
-};
+use ort::{inputs, CPUExecutionProvider, CUDAExecutionProvider, ExecutionProvider, Session};
 
 #[allow(unused_imports)] //based on features
 use shared_types::tracking::{
@@ -16,12 +14,16 @@ use super::ObjectDetection;
 
 lazy_static! {
     static ref MODEL: Session = {
+        let mut provider = CPUExecutionProvider::default().build();
+        let cuda =
+            CUDAExecutionProvider::with_device_id(CUDAExecutionProvider::default(), 0).build();
+        if cuda.is_available().unwrap() {
+            println!("Using CUDA");
+            provider = cuda;
+        }
+
         ort::init()
-            .with_execution_providers([
-                TensorRTExecutionProvider::default().build(),
-                CUDAExecutionProvider::default().build(),
-                CPUExecutionProvider::default().build(),
-            ])
+            .with_execution_providers([provider])
             .commit()
             .unwrap();
 
