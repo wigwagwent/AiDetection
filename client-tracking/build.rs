@@ -1,28 +1,39 @@
-feature_utils::mandatory_and_unique!("model-yolov8s", "model-yolov8n", "model-yolov8m", "model-yolov8s-oiv7");
-
 use std::process::Command;
-use std::fs;
 
 fn main() {
-    // Check if all model files exist in the "models" directory
-    let model_files = vec!["yolov8s.onnx", "yolov8n.onnx", "yolov8m.onnx", "yolov8s-oiv7.onnx"];
-    let mut all_models_exist = true;
-    for model_file in &model_files {
-        if !fs::metadata(format!("models/{}", model_file)).is_ok() {
-            all_models_exist = false;
-            break;
+    // Determine which model and export type to use based on feature flags
+    let engine = {
+        if cfg!(feature = "engine-onnx") {
+            "--onnx"
+        } else if cfg!(feature = "engine-tensorrt") {
+            "--tensorrt"
+        } else {
+            ""
         }
-    }
+    };
 
-    // If not all models exist, execute the Python script to fetch them
-    if !all_models_exist {
-        let output = Command::new("python")
-            .arg("get_models.py")
-            .output()
-            .expect("Failed to execute Python script");
+    let model = {
+        if cfg!(feature = "model-yolov8s") {
+            "yolov8s"
+        } else if cfg!(feature = "model-yolov8n") {
+            "yolov8n"
+        } else if cfg!(feature = "model-yolov8m") {
+            "yolov8m"
+        } else if cfg!(feature = "model-yolov8s-oiv7") {
+            "yolov8s-oiv7"
+        } else {
+            ""
+        }
+    };
 
-        println!("{}", String::from_utf8_lossy(&output.stdout));
-    }
+    let string_command = format!("get_models.py --model {} {}", model, engine);
+    println!("{}", string_command);
+    Command::new("python")
+        .arg("get_models.py")
+        //.arg(format!("--model {}", model))
+        .arg("--model")
+        .arg(model)
+        .arg(engine)
+        .output()
+        .expect("Failed to execute Python script");
 }
-
-

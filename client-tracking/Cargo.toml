@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["model-yolov8m"]
+default = ["model-yolov8m", "engine-onnx"]
 
 
 # Currently Supported models
@@ -13,6 +13,8 @@ model-yolov8s = []
 model-yolov8n = []
 model-yolov8m = []
 model-yolov8s-oiv7 = []
+engine-onnx = []
+engine-tensorrt = []
 
 [dependencies]
 serde = { version = "1.0.190", features = ["derive", "rc"] }
