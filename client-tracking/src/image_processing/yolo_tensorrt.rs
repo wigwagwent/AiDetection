@@ -30,7 +30,7 @@ impl YoloTensorrt {
             origin_img_width,
             origin_img_height,
             model: {
-                let engine_path = std::path::Path::new("yolov8.engine");
+                let engine_path = std::path::Path::new("models/yolov8n.engine");
                 let mut yolov8 = yolov8_bindings::new_engine(engine_path);
                 yolov8.pin_mut().make_pipe();
                 yolov8
