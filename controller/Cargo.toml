@@ -23,8 +23,8 @@ base64 = { version = "0.21.5" }
 tokio = { version = "1.33.0", features = ["full"] }
 tokio-stream = { version = "0.1.14" }
 futures-util = { version = "0.3.29" }
-image = { version = "0.24.7" }
-imageproc = { version = "0.23.0" }
+image = { version = "0.25" }
+imageproc = { version = "0.24" }
 shared-types = { path = "../shared-types" }
 rusttype = { version = "0.9.2" }
 libcamera = { version = "0.2.3", optional = true }

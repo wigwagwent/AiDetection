@@ -93,10 +93,7 @@ pub async fn get_img_with_id(
 async fn send_image(image: &DynamicImage) -> Result<Response, Infallible> {
     let mut bytes: Vec<u8> = Vec::new();
     image
-        .write_to(
-            &mut Cursor::new(&mut bytes),
-            image::ImageOutputFormat::from(ImageFormat::Jpeg),
-        )
+        .write_to(&mut Cursor::new(&mut bytes), ImageFormat::Jpeg)
         .expect("");
 
     Ok(warp::reply::with_header(

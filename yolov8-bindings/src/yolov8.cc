@@ -87,6 +87,19 @@ void YoloV8::make_pipe()
         this->device_ptrs.push_back(d_ptr);
         this->host_ptrs.push_back(h_ptr);
     }
+
+    for (int i = 0; i < 10; i++)
+    {
+        for (auto &bindings : this->input_bindings)
+        {
+            size_t size = bindings.size * bindings.dsize;
+            void *h_ptr = malloc(size);
+            memset(h_ptr, 0, size);
+            CHECK(cudaMemcpyAsync(this->device_ptrs[0], h_ptr, size, cudaMemcpyHostToDevice, this->stream));
+            free(h_ptr);
+        }
+        this->infer();
+    }
 }
 
 void YoloV8::copy_from_image(rust::Vec<uint8_t> image, int32_t width, int32_t height)

@@ -14,22 +14,24 @@ pub fn add_tracking_data_to_image(
     for rectangle in outlines {
         draw_hollow_rect_mut(
             &mut image,
-            Rect::at(rectangle.x_bottom_corner, rectangle.y_bottom_corner)
-                .of_size(rectangle.x_length, rectangle.y_height),
+            Rect::at(rectangle.x0, rectangle.y0).of_size(
+                (rectangle.x1 - rectangle.x0) as u32,
+                (rectangle.y1 - rectangle.y0) as u32,
+            ),
             Rgba([255, 0, 0, 0]),
         );
 
         let font_data: &[u8] = include_bytes!("MartianMono-NrRg.ttf");
         let font = Font::try_from_bytes(font_data).expect("Error constructing Font");
-        draw_text_mut(
-            &mut image,
-            Rgba([255, 0, 0, 0]),
-            rectangle.x_bottom_corner + 2,
-            rectangle.y_bottom_corner + 2,
-            Scale::uniform(20.0),
-            &font,
-            &rectangle.label.as_string(),
-        );
+        // draw_text_mut(
+        //     &mut image,
+        //     Rgba([255, 0, 0, 0]),
+        //     rectangle.x0 + 2,
+        //     rectangle.y0 + 2,
+        //     Scale::uniform(20.0),
+        //     &font,
+        //     &rectangle.label.as_string(),
+        // );
     }
     image
 }

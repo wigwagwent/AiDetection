@@ -2,7 +2,7 @@ use std::io::Cursor;
 
 use base64::engine::general_purpose::STANDARD as BASE64;
 use base64::engine::Engine as _;
-use image::ImageOutputFormat;
+use image::ImageFormat;
 use shared_types::server::{ImageInformation, ProcessingStatus};
 
 use crate::controller_helper::markup_image::add_tracking_data_to_image;
@@ -34,7 +34,7 @@ pub fn image_html(image_store: ImageStore) -> String {
 
     let mut image_data: Vec<u8> = Vec::new();
     image
-        .write_to(&mut Cursor::new(&mut image_data), ImageOutputFormat::Png)
+        .write_to(&mut Cursor::new(&mut image_data), ImageFormat::Png)
         .unwrap();
     let res_base64 = BASE64.encode(image_data);
 
