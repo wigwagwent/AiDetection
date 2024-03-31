@@ -37,23 +37,23 @@ pub fn receive_img(raw_img: Vec<u8>, tx: UnboundedSender<Message>) {
     let real_img = DynamicImage::ImageRgb8(img_buf);
     let mut obj_dec = new_object_detection(img.origin_width, img.origin_height);
 
-    obj_dec.process_image(real_img);
+    obj_dec.process_image(real_img.clone());
     obj_dec.detect_objects();
     let output = obj_dec.process_results();
 
-    obj_dec.process_image(real_img);
+    obj_dec.process_image(real_img.clone());
     obj_dec.detect_objects();
     let output = obj_dec.process_results();
 
-    obj_dec.process_image(real_img);
+    obj_dec.process_image(real_img.clone());
     obj_dec.detect_objects();
     let output = obj_dec.process_results();
 
-    obj_dec.process_image(real_img);
+    obj_dec.process_image(real_img.clone());
     obj_dec.detect_objects();
     let output = obj_dec.process_results();
 
-    obj_dec.process_image(real_img);
+    obj_dec.process_image(real_img.clone());
     obj_dec.detect_objects();
     let output = obj_dec.process_results();
 
