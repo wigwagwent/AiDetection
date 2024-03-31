@@ -77,6 +77,8 @@ impl ObjectDetection for YoloTensorrt {
     /// Returns array of detected objects in a format [(x1,y1,x2,y2,object_type,probability),..]
     fn process_results(&mut self) -> Vec<TrackingResult> {
         let results = self.model.pin_mut().get_results().clone();
+        println!("Results: {:?}", results.len());
+        println!("Results: {:?}", results);
         let tracking_data = results.iter().map(|result| {
             #[cfg(any(
                 feature = "model-yolov8s",
