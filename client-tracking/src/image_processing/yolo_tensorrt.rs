@@ -96,10 +96,10 @@ impl ObjectDetection for YoloTensorrt {
                 let tracking_result = TrackingResult {
                     label,
                     confidence: result.confidence,
-                    x0: (result.x0 / 640.0 * (self.origin_img_width as f32)) as i32,
-                    x1: (result.x1 / 640.0 * (self.origin_img_width as f32)) as i32,
-                    y0: (result.y0 / 640.0 * (self.origin_img_height as f32)) as i32,
-                    y1: (result.y1 / 640.0 * (self.origin_img_height as f32)) as i32,
+                    x0: (result.x0 as f32 / 640.0 * (self.origin_img_width as f32)) as i32,
+                    x1: (result.x1 as f32 / 640.0 * (self.origin_img_width as f32)) as i32,
+                    y0: (result.y0 as f32 / 640.0 * (self.origin_img_height as f32)) as i32,
+                    y1: (result.y1 as f32 / 640.0 * (self.origin_img_height as f32)) as i32,
                 };
                 tracking_data.push(tracking_result);
             }
