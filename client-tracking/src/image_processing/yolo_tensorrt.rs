@@ -119,6 +119,7 @@ impl ObjectDetection for YoloTensorrt {
             let first_result = tracking_data[0];
             tracking_data.retain(|box1| iou(&first_result, box1) < 0.7);
         }
+        println!("Result: {:?}", result);
         result
     }
 }
