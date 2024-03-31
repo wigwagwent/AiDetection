@@ -16,16 +16,18 @@ fn union(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
     println!("box1_area: {:?}, box2_area: {:?}", box1_area, box2_area);
     assert!(box1_area >= 0);
     assert!(box2_area >= 0);
+    assert!((box1.x1 - box1.x0) >= 0);
+    assert!((box1.y1 - box1.y0) >= 0);
     (box1_area + box2_area) as f32 - intersection(box1, box2)
 }
 
 /// Function calculates intersection area of two boxes
 /// Returns Area of intersection of the boxes as a float number
 fn intersection(box1: &TrackingResult, box2: &TrackingResult) -> f32 {
-    let x_bottom = box1.x0.max(box2.x0);
-    let y_bottom = box1.y0.max(box2.y1);
-    let x_top = box1.x1.min(box2.x1);
-    let y_top = box1.y1.min(box2.y1);
+    let x_bottom = box1.x0.min(box2.x0);
+    let y_bottom = box1.y0.min(box2.y1);
+    let x_top = box1.x1.max(box2.x1);
+    let y_top = box1.y1.max(box2.y1);
     println!(
         "x_bottom: {:?}, y_bottom: {:?}, x_top: {:?}, y_top: {:?}",
         x_bottom, y_bottom, x_top, y_top
