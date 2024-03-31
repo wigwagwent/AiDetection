@@ -1,6 +1,6 @@
 #include "yolov8-bindings/include/yolov8.hh"
 #include "yolov8-bindings/src/lib.rs.h"
-#include <opencv2/opencv.hpp>
+// #include <opencv2/opencv.hpp>
 
 std::unique_ptr<YoloV8> new_engine(rust::Vec<uint8_t> modelData)
 {
@@ -54,19 +54,19 @@ YoloV8::YoloV8(rust::Vec<uint8_t> modelData)
 
 YoloV8::~YoloV8()
 {
-    this->context->destroy();
-    this->engine->destroy();
-    this->runtime->destroy();
-    cudaStreamDestroy(this->stream);
-    for (auto &ptr : this->device_ptrs)
-    {
-        CHECK(cudaFree(ptr));
-    }
+    // this->context->destroy();
+    // this->engine->destroy();
+    // this->runtime->destroy();
+    // cudaStreamDestroy(this->stream);
+    // for (auto &ptr : this->device_ptrs)
+    // {
+    //     CHECK(cudaFree(ptr));
+    // }
 
-    for (auto &ptr : this->host_ptrs)
-    {
-        CHECK(cudaFreeHost(ptr));
-    }
+    // for (auto &ptr : this->host_ptrs)
+    // {
+    //     CHECK(cudaFreeHost(ptr));
+    // }
 }
 
 void YoloV8::make_pipe()

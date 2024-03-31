@@ -61,14 +61,14 @@ lazy_static! {
     };
 }
 
-pub struct Yolo {
+pub struct YoloOnnx {
     prepared_img: Array<f32, IxDyn>,
     processed_img: Array<f32, IxDyn>,
     origin_img_width: u32,
     origin_img_height: u32,
 }
 
-impl Yolo {
+impl YoloOnnx {
     pub fn new(origin_img_width: u32, origin_img_height: u32) -> Self {
         Self {
             prepared_img: Array::zeros((1, 3, 640, 640)).into_dyn(),
@@ -79,7 +79,7 @@ impl Yolo {
     }
 }
 
-impl ObjectDetection for Yolo {
+impl ObjectDetection for YoloOnnx {
     /// Function used to convert input image to tensor,
     /// required as an input to YOLOv8 object detection
     /// network.

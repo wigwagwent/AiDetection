@@ -8,14 +8,22 @@ use shared_types::{
 use tokio::time::Instant;
 use tokio_tungstenite::tungstenite::Message;
 
-use self::yolo::Yolo;
+#[cfg(feature = "engine-onnx")]
+use self::yolo_onnx::YoloOnnx;
+#[cfg(feature = "engine-tensorrt")]
+use self::yolo_tensorrt::YoloTensorrt;
 
-mod yolo;
+mod iou_helper;
+
+#[cfg(feature = "engine-onnx")]
+mod yolo_onnx;
+#[cfg(feature = "engine-tensorrt")]
+mod yolo_tensorrt;
 
 pub trait ObjectDetection {
     fn process_image(&mut self, img: image::DynamicImage);
     fn detect_objects(&mut self);
-    fn process_results(&self) -> Vec<TrackingResult>;
+    fn process_results(&mut self) -> Vec<TrackingResult>;
 }
 
 pub fn receive_img(raw_img: Vec<u8>, tx: UnboundedSender<Message>) {
@@ -46,11 +54,10 @@ pub fn receive_img(raw_img: Vec<u8>, tx: UnboundedSender<Message>) {
 }
 
 fn new_object_detection(origin_img_width: u32, origin_img_height: u32) -> impl ObjectDetection {
-    #[cfg(any(
-        feature = "model-yolov8s",
-        feature = "model-yolov8n",
-        feature = "model-yolov8m",
-        feature = "model-yolov8s-oiv7"
-    ))]
-    Yolo::new(origin_img_width, origin_img_height)
+    #[cfg(feature = "engine-onnx")]
+    let object_detection = YoloOnnx::new(origin_img_width, origin_img_height);
+
+    #[cfg(feature = "engine-tensorrt")]
+    let object_detection = YoloTensorrt::new(origin_img_width, origin_img_height);
+    object_detection
 }

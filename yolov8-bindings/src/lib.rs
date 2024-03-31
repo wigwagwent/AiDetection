@@ -1,39 +1,12 @@
 use cxx::UniquePtr;
-use image::{DynamicImage, GenericImageView};
-use std::{fs::File, io::Read, path::Path, pin::Pin, time::Duration};
+use std::{fs::File, io::Read, path::Path};
+
+pub use ffi::Result;
+pub use ffi::YoloV8;
 
 pub fn new_engine(engine_path: &Path) -> UniquePtr<ffi::YoloV8> {
     let trt_model_stream = read_model_file(engine_path);
     ffi::new_engine(trt_model_stream)
-}
-
-pub fn make_pipe(yolov8: Pin<&mut ffi::YoloV8>) {
-    yolov8.make_pipe();
-}
-
-pub fn copy_from_image(yolov8: Pin<&mut ffi::YoloV8>, image: DynamicImage) {
-    let (width, height) = image.dimensions();
-    let mut image = image;
-    if width != 640 && height != 640 {
-        println!("Resizing image to 640x640");
-        image = image.resize_to_fill(640, 640, image::imageops::FilterType::Nearest);
-    }
-    let (width, height) = image.dimensions();
-    let image = rgb_to_bgr_bytes(&image);
-    yolov8.copy_from_image(image, width as i32, height as i32);
-}
-
-pub fn infer(yolov8: Pin<&mut ffi::YoloV8>) -> Duration {
-    let start_time = std::time::Instant::now();
-    yolov8.infer();
-    let end_time = std::time::Instant::now();
-    end_time.duration_since(start_time)
-}
-
-pub fn get_results(yolov8: Pin<&mut ffi::YoloV8>) -> Vec<ffi::Result> {
-    let results = yolov8.get_results();
-    let restults3 = results.clone();
-    restults3
 }
 
 fn read_model_file(file_path: &Path) -> Vec<u8> {
@@ -42,25 +15,6 @@ fn read_model_file(file_path: &Path) -> Vec<u8> {
     file.read_to_end(&mut buffer).expect("Failed to read file");
     println!("Length of model file: {}", buffer.len());
     buffer
-}
-
-fn rgb_to_bgr_bytes(img: &DynamicImage) -> Vec<u8> {
-    let (width, height) = img.dimensions();
-    let mut bgr_bytes = vec![0; (width * height * 3) as usize]; // 3 bytes per pixel (BGR)
-
-    // Convert RGB to BGR
-    for y in 0..height {
-        for x in 0..width {
-            let pixel = img.get_pixel(x, y).0;
-            let bgr_pixel = [pixel[2], pixel[1], pixel[0]]; // Rearrange RGB channels to BGR
-            let index = ((y * width + x) * 3) as usize;
-            bgr_bytes[index] = bgr_pixel[0];
-            bgr_bytes[index + 1] = bgr_pixel[1];
-            bgr_bytes[index + 2] = bgr_pixel[2];
-        }
-    }
-
-    bgr_bytes
 }
 
 #[cxx::bridge]

@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["model-yolov8m", "engine-onnx"]
+default = ["model-yolov8m", "engine-tensorrt"]
 
 
 # Currently Supported models
@@ -13,8 +13,8 @@ model-yolov8s = []
 model-yolov8n = []
 model-yolov8m = []
 model-yolov8s-oiv7 = []
-engine-onnx = []
-engine-tensorrt = []
+engine-onnx = ["dep:ort"]
+engine-tensorrt = ["dep:yolov8-bindings", "dep:cxx"]
 
 [dependencies]
 serde = { version = "1.0.190", features = ["derive", "rc"] }
@@ -26,11 +26,13 @@ tokio-stream = { version = "0.1.14" }
 tokio-tungstenite = { version = "0.20.1" }
 futures-util = { version = "0.3.29" }
 futures-channel = { version = "0.3.29" }
-image = { version = "0.24.7" }
+image = { version = "0.25" }
 shared-types = { path = "../shared-types" }
 ndarray = { version = "0.15.6" }
-ort = { version = "2.0.0-rc.0", features = [ "cuda", "tensorrt" ] }
+ort = { version = "2.0.0-rc.0", features = [ "cuda", "tensorrt" ], optional = true }
 lazy_static = { version = "1.4.0" }
+yolov8-bindings = { path = "../yolov8-bindings", optional = true }
+cxx = { version = "1.0", optional = true }
 
 [build-dependencies]
 feature_utils = "0.0.0"

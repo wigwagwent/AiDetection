@@ -88,8 +88,4 @@ fn main() {
     println!("cargo:rustc-link-lib=dylib=opencv_imgproc");
     println!("cargo:rustc-link-lib=dylib=opencv_highgui");
     println!("cargo:rustc-link-lib=dylib=opencv_dnn");
-
-    // println!("cargo:include={}", cuda_include_dir);
-    // println!("cargo:include={}", opencv_include_dir);
-    // println!("cargo:include={}", tensorrt_include_dir);
 }
