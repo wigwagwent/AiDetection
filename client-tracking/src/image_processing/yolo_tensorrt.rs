@@ -77,8 +77,6 @@ impl ObjectDetection for YoloTensorrt {
     /// Returns array of detected objects in a format [(x1,y1,x2,y2,object_type,probability),..]
     fn process_results(&mut self) -> Vec<TrackingResult> {
         let results = self.model.pin_mut().get_results().clone();
-        println!("Results: {:?}", results.len());
-        println!("Results: {:?}", results);
         let mut tracking_data = {
             let mut tracking_data: Vec<TrackingResult> = Vec::new();
             for result in &results {
@@ -98,24 +96,21 @@ impl ObjectDetection for YoloTensorrt {
                 let tracking_result = TrackingResult {
                     label,
                     confidence: result.confidence,
-                    x0: result.x0,
-                    x1: result.x1,
-                    y0: result.y0,
-                    y1: result.y1,
+                    x0: (result.x0 / 640.0 * (self.origin_img_width as f32)) as i32,
+                    x1: (result.x1 / 640.0 * (self.origin_img_width as f32)) as i32,
+                    y0: (result.y0 / 640.0 * (self.origin_img_height as f32)) as i32,
+                    y1: (result.y1 / 640.0 * (self.origin_img_height as f32)) as i32,
                 };
                 tracking_data.push(tracking_result);
             }
             tracking_data
         };
-        println!("Tracking data: {:?}", tracking_data.len());
 
         tracking_data.sort_by(|a, b| {
             b.confidence
                 .partial_cmp(&a.confidence)
                 .unwrap_or(Ordering::Equal)
         });
-
-        println!("Tracking data sorted: {:?}", tracking_data.len());
 
         let mut result = Vec::new();
 
@@ -124,7 +119,6 @@ impl ObjectDetection for YoloTensorrt {
             let first_result = tracking_data[0];
             tracking_data.retain(|box1| iou(&first_result, box1) < 0.7);
         }
-        println!("Result: {:?}", result);
         result
     }
 }

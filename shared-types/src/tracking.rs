@@ -8,9 +8,7 @@ pub mod yolo;
 pub struct TrackingResult {
     pub label: ItemLabel,
     pub confidence: f32,
-    // x0, y0 - top left corner
     pub x0: i32,
-    // x1, y1 - bottom right corner
     pub x1: i32,
     pub y0: i32,
     pub y1: i32,
