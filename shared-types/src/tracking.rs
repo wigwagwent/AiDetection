@@ -4,7 +4,7 @@ use self::yolo::{YoloClasses80, YoloClassesOIV7};
 
 pub mod yolo;
 
-#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy)]
+#[derive(Serialize, Deserialize, PartialEq, PartialOrd, Clone, Copy, Debug)]
 pub struct TrackingResult {
     pub label: ItemLabel,
     pub confidence: f32,
