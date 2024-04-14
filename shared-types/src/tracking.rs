@@ -1,6 +1,5 @@
-use serde::{Deserialize, Serialize};
-
 use self::yolo::{YoloClasses80, YoloClassesOIV7};
+use serde::{Deserialize, Serialize};
 
 pub mod yolo;
 

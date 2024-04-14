@@ -1814,8 +1814,6 @@ dependencies = [
  "serde",
  "strum",
  "strum_macros",
- "tokio",
- "warp",
 ]
 
 [[package]]

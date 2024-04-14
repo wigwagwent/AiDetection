@@ -1,44 +1,30 @@
-mod get_images;
+mod get_image;
 
 use dashmap::DashMap;
-use shared_types::server::ImageManager;
 use std::sync::Arc;
 use warp::{reject::Rejection, reply::Reply, Filter};
 
-use self::get_images::{
-    get_img_with_id, get_latest_img, get_latest_tracked_data, get_latest_tracked_image,
+use crate::ImageManager;
+
+use self::get_image::{image_get, image_tracked_get};
+
+use super::api_shared::{
+    api_helper::with_image_store,
+    get_data::{image_data_get, latest_image_data_get, latest_tracking_data_get},
 };
 
 pub fn api_frontend_interface(
     image_store: Arc<DashMap<usize, ImageManager>>,
-) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    route_latest_image_get(image_store.clone())
-        .or(route_image_get(image_store.clone()))
-        .or(route_latest_image_tracked_get(image_store.clone()))
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
+    route_image_get(image_store.clone())
+        .or(route_image_tracked_get(image_store.clone()))
+        .or(route_image_data_get(image_store.clone()))
         .or(route_latest_image_data_get(image_store.clone()))
+        .or(route_latest_tracking_data_get(image_store))
 }
 
-// Define the route for serving the latest image with GET request
-pub fn route_latest_image_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
-) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path("image-latest")
-        .and(warp::get())
-        .and(with_image_store(image_store))
-        .and_then(get_latest_img)
-}
-
-// Define the route for serving the latest image with GET request
-pub fn route_latest_image_tracked_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
-) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path("image-latest-tracked")
-        .and(warp::get())
-        .and(with_image_store(image_store))
-        .and_then(get_latest_tracked_image)
-}
-
-// Define the route for serving the image with GET request
+/// Returns the image with the given id
+/// GET http://127.0.0.1:3000/api/v1/frontend/image/{id}
 pub fn route_image_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
 ) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
@@ -48,24 +34,61 @@ pub fn route_image_get(
         .and(with_image_store(image_store))
         .and_then(
             |id: usize, image_store: Arc<DashMap<usize, ImageManager>>| async move {
-                get_img_with_id(image_store.clone(), &id).await
+                image_get(image_store.clone(), &id).await
             },
         )
 }
 
-// Define the route for serving the latest image with GET request
+/// Returns the image with the given id that has tracking results drawn on it
+/// GET http://127.0.0.1:3000/api/v1/frontend/image-tracked/{id}
+pub fn route_image_tracked_get(
+    image_store: Arc<DashMap<usize, ImageManager>>,
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
+    warp::path("image-tracked")
+        .and(warp::path::param::<usize>())
+        .and(warp::get())
+        .and(with_image_store(image_store))
+        .and_then(
+            |id: usize, image_store: Arc<DashMap<usize, ImageManager>>| async move {
+                image_tracked_get(image_store.clone(), &id).await
+            },
+        )
+}
+
+/// Returns the image details with the given id
+/// GET http://127.0.0.1:3000/api/v1/frontend/image-data/{id}
+pub fn route_image_data_get(
+    image_store: Arc<DashMap<usize, ImageManager>>,
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
+    warp::path("image-data")
+        .and(warp::path::param::<usize>())
+        .and(warp::get())
+        .and(with_image_store(image_store))
+        .and_then(
+            |id: usize, image_store: Arc<DashMap<usize, ImageManager>>| async move {
+                image_data_get(image_store.clone(), &id).await
+            },
+        )
+}
+
+/// Returns the image details of the latest image
+/// GET http://127.0.0.1:3000/api/v1/frontend/latest-image-data
 pub fn route_latest_image_data_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
-) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
     warp::path("image-latest-data")
         .and(warp::get())
         .and(with_image_store(image_store))
-        .and_then(get_latest_tracked_data)
+        .and_then(latest_image_data_get)
 }
 
-fn with_image_store(
+/// Returns the image details of the latest image with tracking data
+/// GET http://127.0.0.1:3000/api/v1/frontend/tracking-image-data
+pub fn route_latest_tracking_data_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
-) -> impl Filter<Extract = (Arc<DashMap<usize, ImageManager>>,), Error = std::convert::Infallible> + Clone
-{
-    warp::any().map(move || image_store.clone())
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
+    warp::path("tracking-latest-data")
+        .and(warp::get())
+        .and(with_image_store(image_store))
+        .and_then(latest_tracking_data_get)
 }

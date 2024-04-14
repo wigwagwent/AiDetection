@@ -1,16 +1,9 @@
-use crate::{tracking::TrackingResult, ProcessingType};
+use crate::tracking::TrackingResult;
 use serde::{Deserialize, Serialize};
-use tokio::time::Duration;
-
-#[derive(Serialize, Deserialize)]
-pub enum ReturnDataType {
-    ListOfItemsDetected(Vec<TrackingResult>),
-    ClientType(ProcessingType),
-}
+use std::time::Duration;
 
 #[derive(Serialize, Deserialize)]
 pub struct ReturnData {
-    pub img_id: usize,
-    pub time_cost: Duration,
-    pub data_type: ReturnDataType,
+    pub tracking_time: Duration,
+    pub tracking_results: Vec<TrackingResult>,
 }

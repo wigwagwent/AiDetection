@@ -44,7 +44,7 @@ impl LoadImages for LocalImage {
 
             let img_id = NEXT_IMAGE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let new_img_store_val: ImageManager = ImageManager {
-                raw: img,
+                image: img,
                 dehazed: None,
                 dehazed_status: ProcessingStatus::NotStarted,
                 dehazed_time: None,

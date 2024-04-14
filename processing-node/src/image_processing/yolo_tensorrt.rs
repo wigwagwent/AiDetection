@@ -11,12 +11,6 @@ use shared_types::tracking::{
 
 use super::{iou_helper::iou, ObjectDetection};
 
-// lazy_static! {
-//     static ref MODEL_INSTANCE: UniquePtr<yolov8_bindings::YoloV8> = {
-
-//     };
-// }
-
 pub struct YoloTensorrt {
     origin_img_width: u32,
     origin_img_height: u32,
@@ -25,10 +19,8 @@ pub struct YoloTensorrt {
 
 #[cfg(feature = "engine-tensorrt")]
 impl YoloTensorrt {
-    pub fn new(origin_img_width: u32, origin_img_height: u32) -> Self {
+    pub fn new() -> Self {
         Self {
-            origin_img_width,
-            origin_img_height,
             model: {
                 let engine_path = std::path::Path::new("models/yolov8n.engine");
                 let mut yolov8 = yolov8_bindings::new_engine(engine_path);
@@ -75,9 +67,13 @@ impl ObjectDetection for YoloTensorrt {
     /// of detected objects. Each object contain the bounding box of
     /// this object, the type of object and the probability
     /// Returns array of detected objects in a format [(x1,y1,x2,y2,object_type,probability),..]
-    fn process_results(&mut self) -> Vec<TrackingResult> {
+    fn process_results(
+        &mut self,
+        origin_img_width: u32,
+        origin_img_height: u32,
+    ) -> Vec<TrackingResult> {
         let results = self.model.pin_mut().get_results().clone();
-        let mut tracking_data = {
+        let tracking_data = {
             let mut tracking_data: Vec<TrackingResult> = Vec::new();
             for result in &results {
                 #[cfg(any(
@@ -96,30 +92,17 @@ impl ObjectDetection for YoloTensorrt {
                 let tracking_result = TrackingResult {
                     label,
                     confidence: result.confidence,
-                    x0: (result.x0 as f32 / 640.0 * (self.origin_img_width as f32)) as i32,
-                    x1: (result.x1 as f32 / 640.0 * (self.origin_img_width as f32)) as i32,
-                    y0: (result.y0 as f32 / 640.0 * (self.origin_img_height as f32)) as i32,
-                    y1: (result.y1 as f32 / 640.0 * (self.origin_img_height as f32)) as i32,
+                    x0: (result.x0 as f32 / 640.0 * (origin_img_width as f32)) as i32,
+                    x1: (result.x1 as f32 / 640.0 * (origin_img_width as f32)) as i32,
+                    y0: (result.y0 as f32 / 640.0 * (origin_img_height as f32)) as i32,
+                    y1: (result.y1 as f32 / 640.0 * (origin_img_height as f32)) as i32,
                 };
                 tracking_data.push(tracking_result);
             }
-            tracking_data
+
+            iou_on_tracking_results(tracking_data)
         };
-
-        tracking_data.sort_by(|a, b| {
-            b.confidence
-                .partial_cmp(&a.confidence)
-                .unwrap_or(Ordering::Equal)
-        });
-
-        let mut result = Vec::new();
-
-        while !tracking_data.is_empty() {
-            result.push(tracking_data[0]);
-            let first_result = tracking_data[0];
-            tracking_data.retain(|box1| iou(&first_result, box1) < 0.7);
-        }
-        result
+        tracking_data
     }
 }
 

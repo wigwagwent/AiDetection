@@ -1,15 +1,16 @@
 use image::{DynamicImage, Rgba};
-use imageproc::{
-    drawing::{draw_hollow_rect_mut, draw_text_mut},
-    rect::Rect,
-};
-use rusttype::{Font, Scale};
+use imageproc::{drawing::draw_hollow_rect_mut, rect::Rect};
+use rusttype::Font;
 use shared_types::tracking::TrackingResult;
 
 pub fn add_tracking_data_to_image(
     image: &DynamicImage,
-    outlines: Vec<TrackingResult>,
+    outlines: &Option<Vec<TrackingResult>>,
 ) -> DynamicImage {
+    let outlines = match outlines {
+        Some(outlines) => outlines,
+        None => return image.clone(),
+    };
     let mut image = image.clone();
     for rectangle in outlines {
         draw_hollow_rect_mut(
@@ -22,7 +23,7 @@ pub fn add_tracking_data_to_image(
         );
 
         let font_data: &[u8] = include_bytes!("MartianMono-NrRg.ttf");
-        let font = Font::try_from_bytes(font_data).expect("Error constructing Font");
+        let _font = Font::try_from_bytes(font_data).expect("Error constructing Font");
         // draw_text_mut(
         //     &mut image,
         //     Rgba([255, 0, 0, 0]),

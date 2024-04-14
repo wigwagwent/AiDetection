@@ -6,7 +6,10 @@ use crate::ImageStore;
 use self::load_camera_image::CameraImage;
 #[cfg(feature = "load-file")]
 use self::load_local_image::LocalImage;
+
+#[cfg(feature = "load-camera")]
 mod load_camera_image;
+#[cfg(feature = "load-file")]
 mod load_local_image;
 
 pub trait LoadImages {
@@ -22,7 +25,7 @@ fn new_load_images() -> impl LoadImages {
     load
 }
 
-pub fn load_new_images_thread(store: ImageStore) {
+pub fn load_new_images_task(store: ImageStore) {
     let mut load = new_load_images();
 
     loop {

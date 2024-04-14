@@ -1,4 +1,23 @@
+use std::cmp::Ordering;
+
 use shared_types::tracking::TrackingResult;
+
+pub fn iou_on_tracking_results(mut tracking_data: Vec<TrackingResult>) -> Vec<TrackingResult> {
+    tracking_data.sort_by(|a, b| {
+        b.confidence
+            .partial_cmp(&a.confidence)
+            .unwrap_or(Ordering::Equal)
+    });
+
+    let mut result = Vec::new();
+
+    while !tracking_data.is_empty() {
+        result.push(tracking_data[0]);
+        let first_result = tracking_data[0];
+        tracking_data.retain(|box1| iou(&first_result, box1) < 0.7);
+    }
+    result
+}
 
 /// Function calculates "Intersection-over-union" coefficient for specified two boxes
 /// https://pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/.

@@ -1,10 +1,7 @@
-use std::{sync::atomic::AtomicBool, time::Duration};
-
+use crate::tracking::TrackingResult;
 use image::DynamicImage;
 use serde::{Deserialize, Serialize};
-use tokio::sync::mpsc;
-
-use crate::{tracking::TrackingResult, ProcessingType};
+use std::time::Duration;
 
 #[derive(Serialize, Deserialize)]
 pub enum SentDataType {
@@ -18,13 +15,7 @@ pub struct SentData {
     pub raw_data: Vec<u8>,
 }
 
-pub struct ClientData {
-    pub link: mpsc::UnboundedSender<warp::filters::ws::Message>,
-    pub client_busy: AtomicBool,
-    pub client_type: Option<ProcessingType>,
-}
-
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Copy)]
 pub enum ProcessingStatus {
     NotStarted,
     Started,
@@ -34,7 +25,7 @@ pub enum ProcessingStatus {
 
 #[derive(Clone)]
 pub struct ImageManager {
-    pub raw: DynamicImage,
+    pub image: DynamicImage,
     pub dehazed: Option<DynamicImage>,
     pub dehazed_status: ProcessingStatus,
     pub dehazed_time: Option<Duration>,
@@ -42,7 +33,6 @@ pub struct ImageManager {
     pub tracked_status: ProcessingStatus,
     pub tracked_time: Option<Duration>,
     pub detection_status: ProcessingStatus,
-    //pub detection: Option<Vec<TrackingResult>>, Use tracked
     pub detection_time: Option<Duration>,
 }
 
@@ -60,12 +50,12 @@ pub struct ImageInformation {
 impl ImageInformation {
     pub fn new(img: &ImageManager) -> Self {
         Self {
-            dehazed_status: img.dehazed_status.clone(),
+            dehazed_status: img.dehazed_status,
             dehazed_time: img.dehazed_time,
             tracked: img.tracked.clone(),
-            tracked_status: img.tracked_status.clone(),
+            tracked_status: img.tracked_status,
             tracked_time: img.tracked_time,
-            detection_status: img.detection_status.clone(),
+            detection_status: img.detection_status,
             detection_time: img.detection_time,
         }
     }
