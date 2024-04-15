@@ -1,14 +1,13 @@
-use dashmap::DashMap;
 use image::Rgb;
 use image::{imageops::FilterType, DynamicImage, GenericImageView, ImageBuffer};
-use shared_types::server::ImageManager;
-use std::{convert::Infallible, sync::Arc};
+use std::convert::Infallible;
 
 use crate::api_v1::api_shared::api_helper::file_not_found;
 use crate::api_v1::api_shared::api_helper::send_image;
+use crate::ImageStore;
 
 pub async fn image_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
     image_id: &usize,
 ) -> Result<impl warp::Reply, Infallible> {
     let image = image_store.get(image_id);

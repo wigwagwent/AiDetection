@@ -1,15 +1,14 @@
-use dashmap::DashMap;
-use shared_types::server::ImageManager;
-use std::{convert::Infallible, sync::Arc};
+use std::convert::Infallible;
 
 use crate::api_v1::api_shared::api_helper::file_not_found;
+use crate::ImageStore;
 use crate::{
     api_v1::api_shared::api_helper::send_image,
     controller_helper::markup_image::add_tracking_data_to_image,
 };
 
 pub async fn image_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
     image_id: &usize,
 ) -> Result<impl warp::Reply, Infallible> {
     let image = image_store.get(image_id);
@@ -22,7 +21,7 @@ pub async fn image_get(
 }
 
 pub async fn image_tracked_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
     image_id: &usize,
 ) -> Result<impl warp::Reply, Infallible> {
     let image = image_store.get(&image_id);

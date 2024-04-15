@@ -6,10 +6,12 @@ use std::{
 
 use dashmap::DashMap;
 use shared_types::server::ImageManager;
-use tokio::task;
+use tokio::{sync::mpsc, task};
 use warp::Filter;
 
-use crate::{controller::controller_task, load_image::load_new_images_task};
+use crate::{
+    api_v1::send_message_on_change, controller::controller_task, load_image::load_new_images_task,
+};
 
 mod api_v1;
 mod controller;
@@ -17,8 +19,10 @@ mod controller_helper;
 mod load_image;
 
 static NEXT_IMAGE_ID: AtomicUsize = AtomicUsize::new(1);
+static NEXT_CLIENT_ID: AtomicUsize = AtomicUsize::new(1);
 
 type ImageStore = Arc<DashMap<usize, ImageManager>>;
+type Clients = Arc<DashMap<usize, mpsc::UnboundedSender<warp::filters::ws::Message>>>;
 
 #[tokio::main]
 async fn main() {
@@ -57,17 +61,28 @@ async fn main() {
     };
 
     let image_store: Arc<DashMap<usize, ImageManager>> = ImageStore::default();
+    let client_store = Clients::default();
 
     let store = Arc::clone(&image_store);
     task::spawn(async move {
         load_new_images_task(store);
     });
+
+    let store = Arc::clone(&image_store);
+    let client = Arc::clone(&client_store);
+    task::spawn(async move {
+        send_message_on_change(store, client);
+    });
+
     let store = Arc::clone(&image_store);
     task::spawn(async move { controller_task(store) });
 
+    let cors = warp::cors().allow_any_origin();
+
     let routes = warp::path("api")
         .and(warp::path("v1"))
-        .and(api_v1::api_interface(image_store));
+        .and(api_v1::api_interface(image_store, client_store))
+        .with(cors);
 
     println!("Now listening on {}:{}", ip, port);
 

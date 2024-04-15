@@ -1,16 +1,14 @@
-use std::{convert::Infallible, sync::Arc};
-
-use dashmap::DashMap;
 use shared_types::{
     client::ReturnData,
     server::{ImageManager, ProcessingStatus},
 };
+use std::convert::Infallible;
 use warp::reply::{self, Reply};
 
-use crate::api_v1::api_shared::api_helper::file_not_found;
+use crate::{api_v1::api_shared::api_helper::file_not_found, ImageStore};
 
 pub async fn latest_image_data_post(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
     image_id: &usize,
     img_data: ReturnData,
 ) -> Result<impl warp::Reply, Infallible> {

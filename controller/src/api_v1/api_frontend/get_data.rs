@@ -1,16 +1,15 @@
-use std::{convert::Infallible, sync::Arc};
+use std::convert::Infallible;
 
-use dashmap::DashMap;
 use shared_types::server::{ImageInformation, ImageManager};
 use warp::reply::{self, Reply, Response};
 
 use crate::{
     api_v1::api_shared::api_helper::{file_not_found, get_latest_tracked_image_id},
-    NEXT_IMAGE_ID,
+    ImageStore, NEXT_IMAGE_ID,
 };
 
 pub async fn image_data_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
     image_id: &usize,
 ) -> Result<Response, Infallible> {
     let image = image_store.get(&image_id);
@@ -25,7 +24,7 @@ pub async fn image_data_get(
 }
 
 pub async fn latest_image_data_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
 ) -> Result<impl warp::Reply, Infallible> {
     image_data_get(
         image_store,
@@ -34,9 +33,7 @@ pub async fn latest_image_data_get(
     .await
 }
 
-pub async fn latest_tracking_data_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
-) -> Result<Response, Infallible> {
+pub async fn latest_tracking_data_get(image_store: ImageStore) -> Result<Response, Infallible> {
     let latest = match get_latest_tracked_image_id(image_store.clone()) {
         Some(latest) => latest,
         None => return file_not_found(),

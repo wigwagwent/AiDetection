@@ -1,5 +1,3 @@
-use std::{thread, time::Duration};
-
 use crate::ImageStore;
 
 #[cfg(feature = "load-camera")]
@@ -30,9 +28,6 @@ pub fn load_new_images_task(store: ImageStore) {
 
     loop {
         load.get_image(&store);
-
-        println!("End of loop, starting over in 1 minute");
-        thread::sleep(Duration::from_secs(60));
         println!("Loop Restarted");
     }
 }

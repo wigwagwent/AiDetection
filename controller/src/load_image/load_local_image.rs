@@ -31,36 +31,34 @@ impl LoadImages for LocalImage {
         file_paths.sort();
 
         for entry in file_paths {
-            loop {
-                thread::sleep(Duration::from_secs_f32(
-                    (1.0 / 60.0) * (60.0 / self.framerate),
-                ));
-                let img = match image::open(entry.as_path()) {
-                    Ok(image) => image,
-                    Err(error) => {
-                        println!("Image could not be read, {}", error);
-                        continue;
-                    }
-                };
-
-                let img_id = NEXT_IMAGE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-                let new_img_store_val: ImageManager = ImageManager {
-                    image: img,
-                    dehazed: None,
-                    dehazed_status: ProcessingStatus::NotStarted,
-                    dehazed_time: None,
-                    tracked: None,
-                    tracked_status: ProcessingStatus::NotStarted,
-                    tracked_time: None,
-                    detection_status: ProcessingStatus::NotStarted,
-                    detection_time: None,
-                };
-                store.insert(img_id, new_img_store_val);
-
-                count += 1;
-                if count % 100 == 0 {
-                    println!("Images Read: {}", count);
+            thread::sleep(Duration::from_secs_f32(
+                (1.0 / 60.0) * (60.0 / self.framerate),
+            ));
+            let img = match image::open(entry.as_path()) {
+                Ok(image) => image,
+                Err(error) => {
+                    println!("Image could not be read, {}", error);
+                    continue;
                 }
+            };
+
+            let img_id = NEXT_IMAGE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let new_img_store_val: ImageManager = ImageManager {
+                image: img,
+                dehazed: None,
+                dehazed_status: ProcessingStatus::NotStarted,
+                dehazed_time: None,
+                tracked: None,
+                tracked_status: ProcessingStatus::NotStarted,
+                tracked_time: None,
+                detection_status: ProcessingStatus::NotStarted,
+                detection_time: None,
+            };
+            store.insert(img_id, new_img_store_val);
+
+            count += 1;
+            if count % 100 == 0 {
+                println!("Images Read: {}", count);
             }
         }
     }

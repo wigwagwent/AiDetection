@@ -1,16 +1,14 @@
-use std::{convert::Infallible, io::Cursor, sync::Arc};
-
-use dashmap::DashMap;
 use image::{DynamicImage, ImageFormat};
-use shared_types::server::{ImageManager, ProcessingStatus};
+use shared_types::server::ProcessingStatus;
+use std::{convert::Infallible, io::Cursor};
 use warp::{
     reply::{Reply, Response},
     Filter,
 };
 
-pub fn get_latest_tracked_image_id(
-    image_store: Arc<DashMap<usize, ImageManager>>,
-) -> Option<usize> {
+use crate::ImageStore;
+
+pub fn get_latest_tracked_image_id(image_store: ImageStore) -> Option<usize> {
     let mut latest_processed: Option<usize> = None;
     for image in image_store.iter() {
         if image.detection_status == ProcessingStatus::Finished
@@ -44,8 +42,7 @@ pub fn file_not_found() -> Result<Response, Infallible> {
 }
 
 pub fn with_image_store(
-    image_store: Arc<DashMap<usize, ImageManager>>,
-) -> impl Filter<Extract = (Arc<DashMap<usize, ImageManager>>,), Error = std::convert::Infallible> + Clone
-{
+    image_store: ImageStore,
+) -> impl Filter<Extract = (ImageStore,), Error = std::convert::Infallible> + Clone {
     warp::any().map(move || image_store.clone())
 }

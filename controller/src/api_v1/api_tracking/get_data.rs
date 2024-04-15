@@ -1,13 +1,11 @@
-use std::{convert::Infallible, sync::Arc};
-
-use dashmap::DashMap;
 use shared_types::{server::ImageManager, ImageProperties};
+use std::convert::Infallible;
 use warp::reply::{self, Reply, Response};
 
-use crate::{api_v1::api_shared::api_helper::file_not_found, NEXT_IMAGE_ID};
+use crate::{api_v1::api_shared::api_helper::file_not_found, ImageStore, NEXT_IMAGE_ID};
 
 pub async fn image_data_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
     image_id: &usize,
 ) -> Result<Response, Infallible> {
     let image = image_store.get(&image_id);
@@ -22,7 +20,7 @@ pub async fn image_data_get(
 }
 
 pub async fn latest_image_data_get(
-    image_store: Arc<DashMap<usize, ImageManager>>,
+    image_store: ImageStore,
 ) -> Result<impl warp::Reply, Infallible> {
     image_data_get(
         image_store,

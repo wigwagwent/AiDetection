@@ -4,13 +4,13 @@ use base64::engine::general_purpose::STANDARD as BASE64;
 use base64::engine::Engine as _;
 use macros::Json;
 use serde::{Deserialize, Serialize};
+use shared_types::server::ImageInformation;
 use yew::prelude::*;
 use yew_websocket::websocket::{WebSocketService, WebSocketStatus, WebSocketTask};
 
 mod macros;
 
 enum Msg {
-    AddOne,
     FetchImage,
     UpdateImage(Vec<u8>),
     WsAction(WsAction),
@@ -31,7 +31,7 @@ impl From<WsAction> for Msg {
 }
 
 const PROTOCOL: &str = "";
-const BASE_URL: &str = "127.0.0.1:3000/api/v1/frontend";
+const BASE_URL: &str = "192.168.8.185:3000/api/v1";
 
 #[derive(Serialize, Debug)]
 struct WsRequest {
@@ -43,15 +43,30 @@ pub struct WsResponse {
     value: u32,
 }
 
-//#[wasm_bindgen]
 async fn fetch_image() -> Vec<u8> {
     let client = reqwest::Client::new();
 
+    let response: ImageInformation = client
+        .get(format!(
+            "http{}://{}/frontend/tracking-image-data",
+            PROTOCOL, BASE_URL
+        ))
+        .header("Accept", "application/json")
+        //.header("Access-Control-Allow-Origin", "*")
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+
     let response = client
-        .get(format!("http{}://{}/image-latest", PROTOCOL, BASE_URL))
+        .get(format!(
+            "http{}://{}/frontend/image-tracked/{}",
+            PROTOCOL, BASE_URL, response.image_id
+        ))
         .header("Accept", "image/jpeg")
-        .header("Cache-Control", "no-cache")
-        .header("Access-Control-Allow-Origin", "*")
+        //.header("Access-Control-Allow-Origin", "*")
         .send()
         .await
         .unwrap();
@@ -74,7 +89,6 @@ async fn fetch_image() -> Vec<u8> {
 }
 
 struct App {
-    value: i64,
     image: Vec<u8>,
     ws: Option<WebSocketTask>,
 }
@@ -85,7 +99,6 @@ impl Component for App {
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self {
-            value: 0,
             image: Vec::new(),
             ws: None,
         }
@@ -93,10 +106,6 @@ impl Component for App {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::AddOne => {
-                self.value += 1;
-                true
-            }
             Msg::FetchImage => {
                 ctx.link().send_future(async {
                     let image = fetch_image().await;
@@ -118,7 +127,7 @@ impl Component for App {
                         }
                     });
                     let task = WebSocketService::connect(
-                        format!("ws{}://{}/ws", PROTOCOL, BASE_URL).as_str(),
+                        format!("ws{}://{}/websocket", PROTOCOL, BASE_URL).as_str(),
                         callback,
                         notification,
                     )
@@ -157,9 +166,10 @@ impl Component for App {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div>
-                <button onclick={ctx.link().batch_callback(|_| vec![Msg::AddOne, Msg::FetchImage])}>{ "+1" }</button>
-                <p>{ self.value }</p>
                 <img id="exampleImage" src={format!("data:image/jpeg;base64,{}", BASE64.encode(self.image.clone()).as_str())} alt="Example Image" />
+                <br />
+                <button onclick={ctx.link().batch_callback(|_| vec![Msg::WsAction(WsAction::Connect)])}>{ "Connect" }</button>
+                <button onclick={ctx.link().batch_callback(|_| vec![Msg::FetchImage])}>{ "Refresh" }</button>
             </div>
         }
     }
