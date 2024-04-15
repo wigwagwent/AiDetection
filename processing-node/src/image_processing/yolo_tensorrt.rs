@@ -1,6 +1,5 @@
 use cxx::UniquePtr;
 use image::{DynamicImage, GenericImageView};
-use std::cmp::Ordering;
 use yolov8_bindings;
 
 #[allow(unused_imports)] //based on features
@@ -9,11 +8,12 @@ use shared_types::tracking::{
     TrackingResult,
 };
 
-use super::{iou_helper::iou, ObjectDetection};
+use super::{
+    iou_helper::{get_img_resized_size, iou_on_tracking_results},
+    ObjectDetection,
+};
 
 pub struct YoloTensorrt {
-    origin_img_width: u32,
-    origin_img_height: u32,
     model: UniquePtr<yolov8_bindings::YoloV8>,
 }
 
@@ -89,13 +89,14 @@ impl ObjectDetection for YoloTensorrt {
                 let label = shared_types::tracking::ItemLabel::YoloClassesOIV7(
                     YoloClassesOIV7::from_repr(result.class_id).unwrap(),
                 );
+                let (width, height) = get_img_resized_size(origin_img_width, origin_img_height);
                 let tracking_result = TrackingResult {
                     label,
                     confidence: result.confidence,
-                    x0: (result.x0 as f32 / 640.0 * (origin_img_width as f32)) as i32,
-                    x1: (result.x1 as f32 / 640.0 * (origin_img_width as f32)) as i32,
-                    y0: (result.y0 as f32 / 640.0 * (origin_img_height as f32)) as i32,
-                    y1: (result.y1 as f32 / 640.0 * (origin_img_height as f32)) as i32,
+                    x0: (result.x0 as f32 / width * (origin_img_width as f32)) as i32,
+                    x1: (result.x1 as f32 / width * (origin_img_width as f32)) as i32,
+                    y0: (result.y0 as f32 / height * (origin_img_height as f32)) as i32,
+                    y1: (result.y1 as f32 / height * (origin_img_height as f32)) as i32,
                 };
                 tracking_data.push(tracking_result);
             }

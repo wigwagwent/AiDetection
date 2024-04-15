@@ -14,7 +14,7 @@ async fn main() {
     }
     let controller_url = format!("http://{}/api/v1/tracking", &args[1]);
 
-    let (sender, mut receiver) = mpsc::channel(1);
+    let (sender, mut receiver) = mpsc::channel(2);
 
     let url = controller_url.clone();
     let load_img_task = tokio::spawn(async move {

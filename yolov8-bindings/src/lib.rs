@@ -17,6 +17,8 @@ fn read_model_file(file_path: &Path) -> Vec<u8> {
     buffer
 }
 
+unsafe impl Send for ffi::YoloV8 {}
+
 #[cxx::bridge]
 mod ffi {
     #[derive(Debug, Clone, Copy)]

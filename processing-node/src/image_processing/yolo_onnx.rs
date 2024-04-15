@@ -11,7 +11,10 @@ use shared_types::tracking::{
     TrackingResult,
 };
 
-use super::{iou_helper::iou_on_tracking_results, ObjectDetection};
+use super::{
+    iou_helper::{get_img_resized_size, iou_on_tracking_results},
+    ObjectDetection,
+};
 
 pub struct YoloOnnx {
     model: Session,
@@ -129,9 +132,9 @@ impl ObjectDetection for YoloOnnx {
                     .reduce(|accum, row| if row.1 > accum.1 { row } else { accum })
                     .unwrap();
 
-                //if confidence < 0.5 {
-                //    continue;
-                //}
+                if confidence < 0.5 {
+                    continue;
+                }
 
                 #[cfg(any(
                     feature = "model-yolov8s",
@@ -147,18 +150,21 @@ impl ObjectDetection for YoloOnnx {
                     YoloClassesOIV7::from_repr(class_id).unwrap(),
                 );
 
-                //let xc = row[0] / 640.0 * (self.origin_img_width as f32);
-                //let yc = row[1] / 640.0 * (self.origin_img_height as f32);
-                //let w = row[2] / 640.0 * (self.origin_img_width as f32);
-                //let h = row[3] / 640.0 * (self.origin_img_height as f32);
+                let (width, height) = get_img_resized_size(origin_img_width, origin_img_height);
+
+                //row[0] x center
+                //row[1] y center
+                //row[2] width
+                //row[3] height
                 let item_box = TrackingResult {
                     label,
                     confidence,
-                    x0: (row[0] / 640.0 * (origin_img_width as f32)) as i32,
-                    x1: (row[1] as f32 / 640.0 * (origin_img_width as f32)) as i32,
-                    y0: ((row[0] + row[2]) / 640.0 * (origin_img_height as f32)) as i32,
-                    y1: ((row[1] + row[3]) / 640.0 * (origin_img_height as f32)) as i32,
+                    x0: (((row[0] - row[2] / 2.0) / width) * origin_img_width as f32) as i32,
+                    y0: (((row[1] - row[3] / 2.0) / height) * origin_img_height as f32) as i32,
+                    x1: (((row[0] + row[2] / 2.0) / width) * origin_img_width as f32) as i32,
+                    y1: (((row[1] + row[3] / 2.0) / height) * origin_img_height as f32) as i32,
                 };
+
                 tracking_data.push(item_box);
             }
             iou_on_tracking_results(tracking_data)

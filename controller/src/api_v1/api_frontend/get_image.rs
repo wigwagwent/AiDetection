@@ -25,7 +25,7 @@ pub async fn image_tracked_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
     image_id: &usize,
 ) -> Result<impl warp::Reply, Infallible> {
-    let image = image_store.get(image_id);
+    let image = image_store.get(&image_id);
 
     if let Some(image) = image {
         let tracked_image = add_tracking_data_to_image(&image.image, &image.tracked);

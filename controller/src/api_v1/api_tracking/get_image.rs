@@ -20,23 +20,6 @@ pub async fn image_get(
     }
 }
 
-// Slow until in release mode
-fn resize_and_pad2(image: &DynamicImage) -> DynamicImage {
-    let resized_image = image.resize(640, 640, FilterType::Lanczos3);
-    let (new_width, new_height) = resized_image.dimensions();
-
-    let mut padded_image = ImageBuffer::new(640, 640);
-    for x in 0..new_width {
-        for y in 0..new_height {
-            let pixel = resized_image.get_pixel(x, y);
-            padded_image.put_pixel(x, y, pixel);
-        }
-    }
-
-    let img = DynamicImage::from(padded_image);
-    img
-}
-
 fn resize_and_pad(image: &DynamicImage) -> DynamicImage {
     let resized_image = image.resize(640, 640, FilterType::Lanczos3);
     let (new_width, new_height) = resized_image.dimensions();

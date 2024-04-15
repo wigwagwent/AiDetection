@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["model-yolov8m", "engine-onnx"]
+default = ["model-yolov8n", "engine-tensorrt"]
 
 
 # Currently Supported models

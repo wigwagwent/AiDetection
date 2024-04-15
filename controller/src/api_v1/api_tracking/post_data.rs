@@ -22,6 +22,7 @@ pub async fn latest_image_data_post(
     };
 
     image.tracked_status = ProcessingStatus::Finished;
+    image.detection_status = ProcessingStatus::Finished;
     image.tracked = Some(img_data.tracking_results);
     image.tracked_time = Some(img_data.tracking_time);
 
