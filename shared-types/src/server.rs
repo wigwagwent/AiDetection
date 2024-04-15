@@ -38,6 +38,7 @@ pub struct ImageManager {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ImageInformation {
+    pub image_id: usize,
     pub dehazed_status: ProcessingStatus,
     pub dehazed_time: Option<Duration>,
     pub tracked: Option<Vec<TrackingResult>>,
@@ -48,8 +49,9 @@ pub struct ImageInformation {
 }
 
 impl ImageInformation {
-    pub fn new(img: &ImageManager) -> Self {
+    pub fn new(img: &ImageManager, img_id: usize) -> Self {
         Self {
+            image_id: img_id,
             dehazed_status: img.dehazed_status,
             dehazed_time: img.dehazed_time,
             tracked: img.tracked.clone(),

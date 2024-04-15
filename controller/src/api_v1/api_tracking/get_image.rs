@@ -1,8 +1,6 @@
 use dashmap::DashMap;
-use image::imageops::FilterType;
-use image::DynamicImage;
-use image::GenericImageView;
-use image::ImageBuffer;
+use image::Rgb;
+use image::{imageops::FilterType, DynamicImage, GenericImageView, ImageBuffer};
 use shared_types::server::ImageManager;
 use std::{convert::Infallible, sync::Arc};
 
@@ -22,9 +20,10 @@ pub async fn image_get(
     }
 }
 
-fn resize_and_pad(image: &DynamicImage) -> DynamicImage {
+// Slow until in release mode
+fn resize_and_pad2(image: &DynamicImage) -> DynamicImage {
     let resized_image = image.resize(640, 640, FilterType::Lanczos3);
-    let (new_width, new_height) = image.dimensions();
+    let (new_width, new_height) = resized_image.dimensions();
 
     let mut padded_image = ImageBuffer::new(640, 640);
     for x in 0..new_width {
@@ -35,6 +34,25 @@ fn resize_and_pad(image: &DynamicImage) -> DynamicImage {
     }
 
     let img = DynamicImage::from(padded_image);
-    img.save("resize.jpg").unwrap();
+    img
+}
+
+fn resize_and_pad(image: &DynamicImage) -> DynamicImage {
+    let resized_image = image.resize(640, 640, FilterType::Lanczos3);
+    let (new_width, new_height) = resized_image.dimensions();
+    let mut padded_image = ImageBuffer::from_pixel(640, 640, Rgb([0, 0, 0]));
+
+    for x in 0..new_width {
+        for y in 0..new_height {
+            let pixel = resized_image.get_pixel(x, y);
+            let rgb_pixel = [
+                pixel[0], // Red channel
+                pixel[1], // Green channel
+                pixel[2], // Blue channel
+            ];
+            padded_image.put_pixel(x, y, Rgb(rgb_pixel));
+        }
+    }
+    let img = DynamicImage::ImageRgb8(padded_image);
     img
 }

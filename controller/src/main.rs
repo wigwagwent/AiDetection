@@ -70,7 +70,6 @@ async fn main() {
         .and(api_v1::api_interface(image_store));
 
     println!("Now listening on {}:{}", ip, port);
-    println!("http://{}:{}/image", ip, port);
 
     warp::serve(routes).run((ip, port)).await;
 }

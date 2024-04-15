@@ -4,13 +4,15 @@ use dashmap::DashMap;
 use shared_types::{client::ReturnData, server::ImageManager};
 use warp::{reject::Rejection, reply::Reply, Filter};
 
-use self::{get_image::image_get, post_data::latest_image_data_post};
-
-use super::api_shared::{
-    api_helper::with_image_store,
+use self::{
     get_data::{image_data_get, latest_image_data_get},
+    get_image::image_get,
+    post_data::latest_image_data_post,
 };
 
+use super::api_shared::api_helper::with_image_store;
+
+mod get_data;
 mod get_image;
 mod post_data;
 
@@ -60,7 +62,7 @@ pub fn route_image_data_get(
 pub fn route_latest_image_data_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
 ) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
-    warp::path("image-latest-data")
+    warp::path("latest-image-data")
         .and(warp::get())
         .and(with_image_store(image_store))
         .and_then(latest_image_data_get)

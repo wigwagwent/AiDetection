@@ -1,3 +1,4 @@
+mod get_data;
 mod get_image;
 
 use dashmap::DashMap;
@@ -6,12 +7,12 @@ use warp::{reject::Rejection, reply::Reply, Filter};
 
 use crate::ImageManager;
 
-use self::get_image::{image_get, image_tracked_get};
-
-use super::api_shared::{
-    api_helper::with_image_store,
+use self::{
     get_data::{image_data_get, latest_image_data_get, latest_tracking_data_get},
+    get_image::{image_get, image_tracked_get},
 };
+
+use super::api_shared::api_helper::with_image_store;
 
 pub fn api_frontend_interface(
     image_store: Arc<DashMap<usize, ImageManager>>,
@@ -76,7 +77,7 @@ pub fn route_image_data_get(
 pub fn route_latest_image_data_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
 ) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
-    warp::path("image-latest-data")
+    warp::path("latest-image-data")
         .and(warp::get())
         .and(with_image_store(image_store))
         .and_then(latest_image_data_get)
@@ -87,7 +88,7 @@ pub fn route_latest_image_data_get(
 pub fn route_latest_tracking_data_get(
     image_store: Arc<DashMap<usize, ImageManager>>,
 ) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
-    warp::path("tracking-latest-data")
+    warp::path("tracking-image-data")
         .and(warp::get())
         .and(with_image_store(image_store))
         .and_then(latest_tracking_data_get)
