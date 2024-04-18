@@ -1,5 +1,4 @@
 use anyhow::Error;
-
 use base64::engine::general_purpose::STANDARD as BASE64;
 use base64::engine::Engine as _;
 use macros::Json;
@@ -114,6 +113,7 @@ impl Component for App {
                 false
             }
             Msg::UpdateImage(image) => {
+                ctx.link().send_message(Msg::FetchImage);
                 self.image = image;
                 true
             }

@@ -20,3 +20,4 @@ wasm-bindgen-futures = "0.4.12"
 wasm-bindgen = { version = "0.2.77", features = ["serde-serialize"] }
 base64 = "0.22.0"
 shared-types = { path = "../shared-types" }
+tungstenite = "0.21"

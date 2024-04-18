@@ -1,6 +1,9 @@
+use ab_glyph::{FontRef, PxScale};
 use image::{DynamicImage, Rgba};
-use imageproc::{drawing::draw_hollow_rect_mut, rect::Rect};
-use rusttype::Font;
+use imageproc::{
+    drawing::{draw_hollow_rect_mut, draw_text_mut},
+    rect::Rect,
+};
 use shared_types::tracking::TrackingResult;
 
 pub fn add_tracking_data_to_image(
@@ -23,16 +26,16 @@ pub fn add_tracking_data_to_image(
         );
 
         let font_data: &[u8] = include_bytes!("MartianMono-NrRg.ttf");
-        let _font = Font::try_from_bytes(font_data).expect("Error constructing Font");
-        // draw_text_mut(
-        //     &mut image,
-        //     Rgba([255, 0, 0, 0]),
-        //     rectangle.x0 + 2,
-        //     rectangle.y0 + 2,
-        //     Scale::uniform(20.0),
-        //     &font,
-        //     &rectangle.label.as_string(),
-        // );
+        let font = FontRef::try_from_slice(font_data).expect("Error constructing Font");
+        draw_text_mut(
+            &mut image,
+            Rgba([255, 0, 0, 0]),
+            rectangle.x0 + 2,
+            rectangle.y0 + 2,
+            PxScale::from(20.0),
+            &font,
+            &rectangle.label.as_string(),
+        );
     }
     image
 }

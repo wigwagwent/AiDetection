@@ -13,7 +13,7 @@ pub struct LocalImage {
 impl Default for LocalImage {
     fn default() -> Self {
         Self {
-            framerate: 15.0,
+            framerate: 30.0,
             path: "local-images/frames".into(),
         }
     }
