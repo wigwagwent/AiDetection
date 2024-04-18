@@ -9,7 +9,7 @@ enum Msg {
 }
 
 const PROTOCOL: &str = "";
-const BASE_URL: &str = "192.168.8.185:3000/api/v1";
+const BASE_URL: &str = "127.0.0.1:3000/api/v1";
 
 async fn fetch_image() -> Vec<u8> {
     let client = reqwest::Client::new();
