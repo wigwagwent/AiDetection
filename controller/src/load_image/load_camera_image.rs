@@ -1,6 +1,6 @@
 use super::LoadImages;
 use crate::{ImageStore, NEXT_IMAGE_ID};
-use image::{DynamicImage, ImageBuffer, ImageFormat};
+use image::{DynamicImage, ImageBuffer};
 use libcamera::{
     camera_manager::CameraManager,
     framebuffer_allocator::{FrameBuffer, FrameBufferAllocator},
@@ -24,10 +24,10 @@ pub struct CameraImage {
 impl Default for CameraImage {
     fn default() -> Self {
         Self {
-            framerate: 5.0,
+            framerate: 30.0,
             size: Size {
-                width: 1920,
-                height: 1080,
+                width: 640,
+                height: 480,
             },
         }
     }
@@ -54,9 +54,9 @@ impl LoadImages for CameraImage {
         assert_eq!(
             config.get(0).unwrap().get_pixel_format(),
             PIXEL_FORMAT_YUYV,
-            "MJPEG is not supported by the camera"
+            "YUYV is not supported by the camera"
         );
-        //println!("Available formats: {:#?}", config.get(0).unwrap().formats());
+        // println!("Available formats: {:#?}", config.get(0).unwrap().formats());
         camera.configure(&mut config).unwrap();
 
         let mut alloc = FrameBufferAllocator::new(&camera);
@@ -83,7 +83,6 @@ impl LoadImages for CameraImage {
             })
             .collect::<Vec<_>>();
 
-        // Completed capture requests are returned as a callback
         let (tx, rx) = std::sync::mpsc::channel();
         camera.on_request_completed(move |req| {
             tx.send(req).unwrap();
@@ -97,34 +96,24 @@ impl LoadImages for CameraImage {
                 (1.0 / 60.0) * (60.0 / self.framerate),
             ));
 
-            //println!("Waiting for camera request execution");
             let mut req = rx
                 .recv_timeout(Duration::from_secs(2))
                 .expect("Camera request failed");
 
-            //println!("Camera request {:?} completed!", req);
-            //println!("Metadata: {:#?}", req.metadata());
-
-            // Get framebuffer for our stream
             let framebuffer: &MemoryMappedFrameBuffer<FrameBuffer> = req.buffer(&stream).unwrap();
-
             let planes = framebuffer.data();
             let image_data = planes.get(0).unwrap();
             let rgb_data = yuyv_to_rgb(&image_data, self.size);
-            //println!("Data: {:#?}", jpeg_data);
-            //println!("Planes: {:?}", planes.len());
 
             let img = DynamicImage::ImageRgb8(
                 ImageBuffer::from_raw(self.size.width, self.size.height, rgb_data).unwrap(),
             );
-            //let img = image::load_from_memory(&image_data).unwrap();
-            //img.save_with_format("output.jpg", ImageFormat::Jpeg).unwrap();
             req.reuse(ReuseFlag::REUSE_BUFFERS);
             camera.queue_request(req).unwrap();
 
             let img_id = NEXT_IMAGE_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let new_img_store_val: ImageManager = ImageManager {
-                raw: img,
+                image: img,
                 dehazed: None,
                 dehazed_status: ProcessingStatus::NotStarted,
                 dehazed_time: None,
