@@ -1,6 +1,6 @@
 use super::LoadImages;
 use crate::{ImageStore, NEXT_IMAGE_ID};
-use image::{DynamicImage, ImageBuffer, ImageFormat};
+use image::{DynamicImage, ImageBuffer};
 use libcamera::{
     camera_manager::CameraManager,
     framebuffer_allocator::{FrameBuffer, FrameBufferAllocator},
@@ -24,7 +24,7 @@ pub struct CameraImage {
 impl Default for CameraImage {
     fn default() -> Self {
         Self {
-            framerate: 5.0,
+            framerate: 30.0,
             size: Size {
                 width: 1920,
                 height: 1080,
