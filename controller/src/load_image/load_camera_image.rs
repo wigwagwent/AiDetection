@@ -26,8 +26,8 @@ impl Default for CameraImage {
         Self {
             framerate: 30.0,
             size: Size {
-                width: 1920,
-                height: 1080,
+                width: 640,
+                height: 480,
             },
         }
     }
@@ -56,7 +56,7 @@ impl LoadImages for CameraImage {
             PIXEL_FORMAT_YUYV,
             "YUYV is not supported by the camera"
         );
-        println!("Available formats: {:#?}", config.get(0).unwrap().formats());
+        // println!("Available formats: {:#?}", config.get(0).unwrap().formats());
         camera.configure(&mut config).unwrap();
 
         let mut alloc = FrameBufferAllocator::new(&camera);
