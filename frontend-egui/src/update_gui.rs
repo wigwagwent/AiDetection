@@ -12,11 +12,11 @@ pub async fn update_image_task(
     framerate: f32,
 ) {
     loop {
-        let time = Duration::from_secs_f32(1.0 / framerate);
-        tokio::time::sleep(time).await;
+        //let time = Duration::from_secs_f32(1.0 / framerate);
+        //tokio::time::sleep(time).await;
         let mut image_store = image_store.lock().await;
         if image_store.len() > 10 {
-            while image_store.len() > 60 {
+            while image_store.len() > 30 {
                 let _ = image_store.pop();
             }
             let image = image_store.pop();

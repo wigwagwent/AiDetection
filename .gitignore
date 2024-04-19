@@ -1,4 +1,5 @@
 target
 controller/local-images/
+controller-with-gui/local-images/
 frontend/dist/
 .vscode

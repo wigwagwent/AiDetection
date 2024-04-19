@@ -13,8 +13,8 @@ mod markup_image;
 pub async fn load_image_task(controller_url: &str, image_store: ImageStore) {
     println!("Starting image loading task");
     loop {
-        let time = Duration::from_secs_f32(1.0 / 45.0);
-        tokio::time::sleep(time).await;
+        //let time = Duration::from_secs_f32(1.0 / 45.0);
+        //tokio::time::sleep(time).await;
 
         let image_info = fetch_latest_image_info(controller_url).await;
 
