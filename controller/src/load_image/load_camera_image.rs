@@ -92,7 +92,7 @@ impl LoadImages for CameraImage {
         camera.queue_request(reqs.pop().unwrap()).unwrap();
 
         loop {
-            thread::sleep(Duration::from_secs_f32(1 / self.framerate));
+            thread::sleep(Duration::from_secs_f32(1.0 / self.framerate));
 
             let mut req = rx
                 .recv_timeout(Duration::from_secs(2))
