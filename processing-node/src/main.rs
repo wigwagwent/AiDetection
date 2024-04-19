@@ -1,6 +1,7 @@
 use image::DynamicImage;
 use reqwest;
-use std::env;
+use shared_types::ImageProperties;
+use std::{collections::HashSet, env};
 use tokio::sync::mpsc;
 
 mod image_processing;
@@ -18,8 +19,24 @@ async fn main() {
 
     let url = controller_url.clone();
     let load_img_task = tokio::spawn(async move {
+        let mut image_ids: HashSet<usize> = HashSet::new();
         loop {
-            let data = load_latest_img(&url).await;
+            let data = load_latest_img_props(&url).await;
+            let data = match data {
+                Ok(data) => data,
+                Err(e) => {
+                    eprintln!("Error: {}", e);
+                    continue;
+                }
+            };
+
+            if image_ids.contains(&data.img_id) {
+                continue;
+            } else {
+                image_ids.insert(data.img_id);
+            }
+
+            let data = load_latest_img(&url, data).await;
             let img_data = match data {
                 Ok(img_data) => img_data,
                 Err(e) => {
@@ -40,15 +57,15 @@ async fn main() {
     tokio::try_join!(load_img_task, process_img_task).unwrap();
 }
 
-async fn load_latest_img(url: &str) -> Result<ImagePropertiesWithImage, anyhow::Error> {
-    let image_details: shared_types::ImageProperties = {
-        let url = format!("{}/latest-image-data", url);
-        reqwest::get(&url)
-            .await?
-            .json::<shared_types::ImageProperties>()
-            .await?
-    };
+async fn load_latest_img_props(url: &str) -> Result<ImageProperties, anyhow::Error> {
+    let url = format!("{}/latest-image-data", url);
+    Ok(reqwest::get(&url).await?.json::<ImageProperties>().await?)
+}
 
+async fn load_latest_img(
+    url: &str,
+    image_details: ImageProperties,
+) -> Result<ImagePropertiesWithImage, anyhow::Error> {
     let image: DynamicImage = {
         let url = format!("{}/image/{}", url, image_details.img_id);
         let image_data = reqwest::get(&url).await?.bytes().await?;
