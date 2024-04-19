@@ -7,7 +7,7 @@ use crate::ImageStore;
 
 use self::{
     get_data::{image_data_get, latest_image_data_get, latest_tracking_data_get},
-    get_image::{image_get, image_tracked_get},
+    get_image::{image_get, image_tracked_get, image_tracked_get_rgb8},
 };
 
 use super::api_shared::api_helper::with_image_store;
@@ -17,6 +17,7 @@ pub fn api_frontend_interface(
 ) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
     route_image_get(image_store.clone())
         .or(route_image_tracked_get(image_store.clone()))
+        .or(route_image_tracked_rgb8_get(image_store.clone()))
         .or(route_image_data_get(image_store.clone()))
         .or(route_latest_image_data_get(image_store.clone()))
         .or(route_latest_tracking_data_get(image_store))
@@ -47,6 +48,20 @@ pub fn route_image_tracked_get(
         .and(with_image_store(image_store))
         .and_then(|id: usize, image_store: ImageStore| async move {
             image_tracked_get(image_store.clone(), &id).await
+        })
+}
+
+/// Returns the image with the given id that has tracking results drawn on it
+/// GET http://127.0.0.1:3000/api/v1/frontend/image-tracked-rgb8/{id}
+pub fn route_image_tracked_rgb8_get(
+    image_store: ImageStore,
+) -> impl Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
+    warp::path("image-tracked-rgb8")
+        .and(warp::path::param::<usize>())
+        .and(warp::get())
+        .and(with_image_store(image_store))
+        .and_then(|id: usize, image_store: ImageStore| async move {
+            image_tracked_get_rgb8(image_store.clone(), &id).await
         })
 }
 

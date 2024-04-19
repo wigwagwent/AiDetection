@@ -4,13 +4,6 @@ pub mod client;
 pub mod server;
 pub mod tracking;
 
-#[derive(Serialize, Deserialize)]
-pub enum ProcessingType {
-    Dehaze,
-    ObjectDetection,
-    Tracking,
-}
-
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ImageProperties {
     pub img_id: usize,

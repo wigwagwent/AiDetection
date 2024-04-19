@@ -19,10 +19,9 @@ pub async fn latest_image_data_post(
         None => return file_not_found(),
     };
 
-    image.tracked_status = ProcessingStatus::Finished;
     image.detection_status = ProcessingStatus::Finished;
-    image.tracked = Some(img_data.tracking_results);
-    image.tracked_time = Some(img_data.tracking_time);
+    image.detection_objects = Some(img_data.tracking_results);
+    image.detection_time = Some(img_data.tracking_time);
 
     Ok(reply::with_status(String::new(), warp::http::StatusCode::OK).into_response())
 }

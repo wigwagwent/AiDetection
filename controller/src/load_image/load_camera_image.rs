@@ -92,9 +92,7 @@ impl LoadImages for CameraImage {
         camera.queue_request(reqs.pop().unwrap()).unwrap();
 
         loop {
-            thread::sleep(Duration::from_secs_f32(
-                (1.0 / 60.0) * (60.0 / self.framerate),
-            ));
+            thread::sleep(Duration::from_secs_f32(1 / self.framerate));
 
             let mut req = rx
                 .recv_timeout(Duration::from_secs(2))
@@ -117,9 +115,7 @@ impl LoadImages for CameraImage {
                 dehazed: None,
                 dehazed_status: ProcessingStatus::NotStarted,
                 dehazed_time: None,
-                tracked: None,
-                tracked_status: ProcessingStatus::NotStarted,
-                tracked_time: None,
+                detection_objects: None,
                 detection_status: ProcessingStatus::NotStarted,
                 detection_time: None,
             };

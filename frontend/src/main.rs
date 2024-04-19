@@ -31,7 +31,7 @@ async fn fetch_image() -> Vec<u8> {
     let response = client
         .get(format!(
             "http{}://{}/frontend/image-tracked/{}",
-            PROTOCOL, BASE_URL, response.image_id
+            PROTOCOL, BASE_URL, response.image_props.img_id
         ))
         .header("Accept", "image/jpeg")
         //.header("Access-Control-Allow-Origin", "*")

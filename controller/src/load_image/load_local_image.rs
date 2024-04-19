@@ -31,9 +31,7 @@ impl LoadImages for LocalImage {
         file_paths.sort();
 
         for entry in file_paths {
-            thread::sleep(Duration::from_secs_f32(
-                (1.0 / 60.0) * (60.0 / self.framerate),
-            ));
+            thread::sleep(Duration::from_secs_f32(1.0 / self.framerate));
             let img = match image::open(entry.as_path()) {
                 Ok(image) => image,
                 Err(error) => {
@@ -48,9 +46,7 @@ impl LoadImages for LocalImage {
                 dehazed: None,
                 dehazed_status: ProcessingStatus::NotStarted,
                 dehazed_time: None,
-                tracked: None,
-                tracked_status: ProcessingStatus::NotStarted,
-                tracked_time: None,
+                detection_objects: None,
                 detection_status: ProcessingStatus::NotStarted,
                 detection_time: None,
             };
