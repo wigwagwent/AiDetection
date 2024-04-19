@@ -20,7 +20,7 @@ pub struct ImageManager {
     pub detection_time: Option<Duration>,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, PartialEq)]
 pub struct ImageInformation {
     pub image_props: ImageProperties,
     pub dehazed_status: ProcessingStatus,
@@ -28,6 +28,19 @@ pub struct ImageInformation {
     pub detection_objects: Option<Vec<TrackingResult>>,
     pub detection_status: ProcessingStatus,
     pub detection_time: Option<Duration>,
+}
+
+impl Default for ImageInformation {
+    fn default() -> Self {
+        Self {
+            image_props: Default::default(),
+            dehazed_status: ProcessingStatus::NotStarted,
+            dehazed_time: None,
+            detection_objects: None,
+            detection_status: ProcessingStatus::NotStarted,
+            detection_time: None,
+        }
+    }
 }
 
 impl ImageInformation {

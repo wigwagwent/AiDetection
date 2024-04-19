@@ -4,11 +4,21 @@ pub mod client;
 pub mod server;
 pub mod tracking;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, PartialEq, Eq, Copy, Debug)]
 pub struct ImageProperties {
     pub img_id: usize,
     pub origin_width: u32,
     pub origin_height: u32,
+}
+
+impl Default for ImageProperties {
+    fn default() -> Self {
+        Self {
+            img_id: 0,
+            origin_width: 0,
+            origin_height: 0,
+        }
+    }
 }
 
 impl ImageProperties {
